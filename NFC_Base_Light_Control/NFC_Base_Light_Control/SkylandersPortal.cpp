@@ -91,7 +91,7 @@ unsigned char* SkylandersPortal::readData(unsigned char* data) {
 }
 
 unsigned char SkylandersPortal::getVersion() {
-
+	return 0;
 }
 
 void SkylandersPortal::writeData(char* data) {
@@ -193,7 +193,7 @@ void SkylandersPortal::writeMaskerMind() {
 				packets[i], 19,
 				50);
 		printf("Wrote packet: %d\n",i);
-		usleep(100000);
+		Sleep(100);
 	}
 
 }

@@ -1,8 +1,9 @@
+#pragma once
 #ifndef INFINITYPORTAL_H
 #define	INFINITYPORTAL_H
 
 #include <stdio.h>
-#include "libusb-1.0/libusb.h"
+#include "libusb.h"
 #include <string.h>
 #include <stdlib.h> 
 #include <stdio.h>
@@ -10,7 +11,6 @@
 #include <iostream>
 #include <cstdlib>
 #include <math.h>
-#include <unistd.h>
 
 class InfinityPortal {
 public:

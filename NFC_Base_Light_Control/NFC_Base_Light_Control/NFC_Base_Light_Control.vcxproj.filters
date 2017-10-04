@@ -14,4 +14,35 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="DeviceHandler.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="InfinityPortal.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lightshow.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SkylandersPortal.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DeviceHandler.h">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="InfinityPortal.h">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="PortalAudio.h">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SkylandersPortal.h">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

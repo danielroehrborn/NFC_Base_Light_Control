@@ -1,17 +1,11 @@
-/*
-* File:   main.cpp
-* Author: christopher
-*
-* Created on 10 August 2014, 21:09
-*/
-
 #include <cstdlib>
 #include <stdio.h>
 #include <sys/types.h>
 #include <iostream>
+#include <Windows.h>
 #include <math.h>
-#include "libusb-1.0/libusb.h"
-#include <unistd.h>
+#include "libusb.h"
+//#include <unistd.h>
 #include "InfinityPortal.h"
 #include "SkylandersPortal.h"
 
@@ -72,8 +66,8 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 
-	InfinityPortal infinityPortals[infinityPortalCount];
-	SkylandersPortal skylanderPortals[skylanderPortalCount];
+	InfinityPortal infinityPortals[5/*infinityPortalCount*/];
+	SkylandersPortal skylanderPortals[5/*skylanderPortalCount*/];
 
 	int j;
 
@@ -93,7 +87,7 @@ int main(int argc, char** argv) {
 
 			if (j < skylanderPortalCount) {
 				// printf("Doing %d\n",j);
-				skylanderPortals[j].setColour(random() % 0x100, random() % 0x100, random() % 0x100);
+				skylanderPortals[j].setColour(std::rand()/*random()*/ % 0x100, std::rand()/*random()*/ % 0x100, std::rand()/*random()*/ % 0x100);
 				// skylanderPortals[j].setLeftColour(random()%0x100,random()%0x100,random()%0x100);
 				// skylanderPortals[j].setRightColour(random()%0x100,random()%0x100,random()%0x100);
 				// skylanderPortals[j].flashTrapLight();
@@ -103,12 +97,12 @@ int main(int argc, char** argv) {
 
 			if (j < infinityPortalCount) {
 				for (int k = 0; k < 3; k++) {
-					infinityPortals[j].setColour(k + 1, random() % 0x100, random() % 0x100, random() % 0x100);
+					infinityPortals[j].setColour(k + 1, std::rand()/*random()*/ % 0x100, std::rand()/*random()*/ % 0x100, std::rand()/*random()*/ % 0x100);
 				}
 			}
 		}
-
-		usleep(100000);
+		Sleep(100);
+		//usleep(100000);
 	}
 
 

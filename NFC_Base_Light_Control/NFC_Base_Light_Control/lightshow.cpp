@@ -1,17 +1,11 @@
-/* 
- * File:   main.cpp
- * Author: christopher
- *
- * Created on 10 August 2014, 21:09
- */
-
 #include <cstdlib>
 #include <stdio.h>
 #include <sys/types.h>
 #include <iostream>
+#include "string"
 #include <math.h>
-#include "libusb-1.0/libusb.h"
-#include <unistd.h>
+#include "string"
+#include "libusb.h"
 #include "InfinityPortal.h"
 #include "SkylandersPortal.h"
 
@@ -20,7 +14,7 @@ using namespace std;
 /*
  * 
  */
-int main(int argc, char** argv) {
+int main2(int argc, char** argv) {
 
 	srand (time(NULL));
 
@@ -63,12 +57,12 @@ int main(int argc, char** argv) {
 	}
 
 	if(skylanderPortalCount == 0 && infinityPortalCount == 0) {
-		printf("Please plug in either a Portal of Power or an Infinity Base\n");
+		std::printf("Please plug in either a Portal of Power or an Infinity Base\n");
 		return -1;
 	}
 
-	InfinityPortal infinityPortals[infinityPortalCount];
-	SkylandersPortal skylanderPortals[skylanderPortalCount];	
+	InfinityPortal infinityPortals[5/*infinityPortalCount*/];
+	SkylandersPortal skylanderPortals[5/*skylanderPortalCount*/];	
 
 	int j;
 
@@ -84,7 +78,7 @@ int main(int argc, char** argv) {
 		lightsCount += 1;
 	}
 
-	printf("lights %d\n",lightsCount);
+	std::printf("lights %d\n",lightsCount);
 
 	// while(true) {
 	// 	for(j = 0 ; j < max(skylanderPortalCount,infinityPortalCount) ; j++) {
@@ -113,10 +107,10 @@ int main(int argc, char** argv) {
     		continue;
     	}
 
-    	skylanderPortals[intVal-1].setColour(random()%0x100,random()%0x100,random()%0x100);
+    	skylanderPortals[intVal-1].setColour(std::rand()/*random()*/ %0x100, std::rand()/*random()*/ %0x100, std::rand()/*random()*/ %0x100);
 
     }
 
-	printf("Done!\n");
+	std::printf("Done!\n");
 	return 0;
 }

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef PORTAl_AUDIO_DATA
 #define PORTAl_AUDIO_DATA
 

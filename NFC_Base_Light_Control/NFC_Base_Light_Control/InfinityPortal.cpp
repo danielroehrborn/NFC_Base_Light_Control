@@ -1,12 +1,12 @@
 #include "InfinityPortal.h"
 
 InfinityPortal::InfinityPortal(int deviceId) {
-	
+
 	// printf("Device id: %d\n",deviceId);
 	deviceHandler = connect(deviceId);
-	
+
 	int retVal = 0;
-	
+
 	if (libusb_kernel_driver_active(deviceHandler, 0) == 1) {
 		retVal = libusb_detach_kernel_driver(deviceHandler, 0);
 		if (retVal < 0) {
@@ -16,9 +16,9 @@ InfinityPortal::InfinityPortal(int deviceId) {
 
 	retVal = libusb_claim_interface(deviceHandler, 0);
 
-	if(retVal != 0) {
-		printf("Error code: %d\n",retVal);
-		printf("Error name: %s\n",libusb_error_name(retVal));
+	if (retVal != 0) {
+		printf("Error code: %d\n", retVal);
+		printf("Error name: %s\n", libusb_error_name(retVal));
 		exit(1);
 	}
 
@@ -30,23 +30,23 @@ InfinityPortal::InfinityPortal() {
 }
 
 libusb_device_handle* InfinityPortal::connect(int deviceId) {
-	
+
 	libusb_device** devices;
 	libusb_context* context;
 	struct libusb_device_handle* tryDeviceHandler;
 
 	libusb_init(&context);
 	int devicesCount = libusb_get_device_list(context, &devices);
-	
+
 	int error;
 
 	struct libusb_device_descriptor descriptor;
-	
+
 	int retVal = libusb_open(devices[deviceId], &tryDeviceHandler);
-	
+
 	libusb_get_device_descriptor(devices[deviceId], &descriptor);
 
-	if(descriptor.idVendor == 0x0e6f && descriptor.idProduct == 0x0129) {
+	if (descriptor.idVendor == 0x0e6f && descriptor.idProduct == 0x0129) {
 
 		return tryDeviceHandler;
 	}
@@ -99,8 +99,8 @@ void InfinityPortal::sendPacket(unsigned char* packet) {
 
 	receivePackets();
 
-	while(retVal < 0) {
-		retVal = libusb_bulk_transfer(deviceHandler,0x01,packet,32,&len,100);
+	while (retVal < 0) {
+		retVal = libusb_bulk_transfer(deviceHandler, 0x01, packet, 32, &len, 100);
 		receivePackets();
 	}
 
@@ -109,12 +109,12 @@ void InfinityPortal::sendPacket(unsigned char* packet) {
 	// 	printf("Error name: %s\n",libusb_error_name(retVal));
 	// 	exit(1);
 	// }
-	
+
 }
 
 void InfinityPortal::processReceivedPacket(unsigned char* packet) {
 
-	if(packet[0x00] == 0xab) {
+	if (packet[0x00] == 0xab) {
 		// printf("Something was placed somewhere!\n");
 
 		// printf("Received: ");
@@ -127,20 +127,22 @@ void InfinityPortal::processReceivedPacket(unsigned char* packet) {
 		char platformSetting = packet[2];
 		char placedRemoved = packet[5];
 
-		if(placedRemoved == 0x00) {
-			printf("Tag placed on platform: %d\n",platformSetting);
-		} else {
-			printf("Tag removed from platform: %d\n",platformSetting);
+		if (placedRemoved == 0x00) {
+			printf("Tag placed on platform: %d\n", platformSetting);
+		}
+		else {
+			printf("Tag removed from platform: %d\n", platformSetting);
 		}
 
 		getTagId();
 
-	} else if(packet[0x00] == 0xaa && packet[0x01] == 0x09) {
+	}
+	else if (packet[0x00] == 0xaa && packet[0x01] == 0x09) {
 		printf("Got tag info\n");
 
 		// make print tag info!!!
-		for(int i = 10 ; i > 2 ; i--) {
-			printf("%x ",packet[i]);
+		for (int i = 10; i > 2; i--) {
+			printf("%x ", packet[i]);
 		}
 		printf("\n");
 	}
@@ -149,15 +151,15 @@ void InfinityPortal::processReceivedPacket(unsigned char* packet) {
 
 int InfinityPortal::receivePackets() {
 
-	int packetsReceived;
+	int packetsReceived = 0;
 	int retVal = 0;
 	int len = 0;
 	unsigned char* packet = new unsigned char[32];
 
-	while(retVal == 0) {
+	while (retVal == 0) {
 
-		retVal = libusb_bulk_transfer(deviceHandler,0x81,packet,32,&len,10);
-		if(retVal == 0) {
+		retVal = libusb_bulk_transfer(deviceHandler, 0x81, packet, 32, &len, 10);
+		if (retVal == 0) {
 			processReceivedPacket(packet);
 			packetsReceived += 1;
 		}
@@ -182,7 +184,7 @@ void InfinityPortal::fadeColour(char platform, char r, char g, char b) {
 	packet[9] = b;
 
 	int checksum = 0;
-	for(int l = 0 ; l < 10 ; l++) {
+	for (int l = 0; l < 10; l++) {
 		checksum += packet[l];
 	}
 
@@ -215,11 +217,11 @@ void InfinityPortal::fadeColour(char platform, char r, char g, char b) {
 }
 
 InfinityPortal::~InfinityPortal() {
-	
+
 }
 
 void InfinityPortal::activate() {
-	unsigned char packet[] = {0xff,0x11,0x80,0x00,0x28,0x63,0x29,0x20,0x44,0x69,0x73,0x6e,0x65,0x79,0x20,0x32,0x30,0x31,0x33,0xb6,0x30,0x6f,0xcb,0x40,0x30,0x6a,0x44,0x20,0x30,0x5c,0x6f,0x00};
+	unsigned char packet[] = { 0xff,0x11,0x80,0x00,0x28,0x63,0x29,0x20,0x44,0x69,0x73,0x6e,0x65,0x79,0x20,0x32,0x30,0x31,0x33,0xb6,0x30,0x6f,0xcb,0x40,0x30,0x6a,0x44,0x20,0x30,0x5c,0x6f,0x00 };
 	sendPacket(packet);
 }
 
@@ -240,7 +242,7 @@ void InfinityPortal::setColour(char platform, char r, char g, char b) {
 	// packet[8] = 0xd8;
 
 	int checksum = 0;
-	for(int l = 0 ; l < 8 ; l++) {
+	for (int l = 0; l < 8; l++) {
 		checksum += packet[l];
 	}
 
@@ -294,7 +296,7 @@ void InfinityPortal::flashColour(char platform, char r, char g, char b) {
 
 	int checksum = 0;
 
-	for(int l = 0 ; l < 11 ; l++) {
+	for (int l = 0; l < 11; l++) {
 		checksum += packet[l];
 	}
 
