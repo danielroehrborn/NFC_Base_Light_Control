@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
 	int devicesCount = libusb_get_device_list(context, &devices);
 
 	struct libusb_device_descriptor descriptor;
-	libusb_device_handle* deviceHandler;
+	libusb_device_handle* deviceHandler = NULL;
 
 	int retVal = 0;
 	int skylanderPortalIds[0xff];
@@ -41,6 +41,31 @@ int main(int argc, char** argv) {
 		if (retVal < 0) {
 			continue;
 		}
+
+
+		unsigned char* data = NULL;
+		/*	libusb_device_handle *dev_handle,
+			uint8_t request_type,
+			uint8_t bRequest,
+			uint16_t wValue,
+			uint16_t wIndex,
+			unsigned char *data,
+			uint16_t wLength,
+			unsigned int timeout);*/
+		retVal = libusb_control_transfer(deviceHandler,
+			LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE | LIBUSB_ENDPOINT_IN,
+			0x09,
+			(2 << 8) | 'C',
+			0,
+			(unsigned char *)data, 32,
+			50);
+
+
+
+		int len;
+		retVal = libusb_bulk_transfer(deviceHandler, 0x81, data, 32, &len, 100);
+
+
 
 		libusb_get_device_descriptor(devices[i], &descriptor);
 

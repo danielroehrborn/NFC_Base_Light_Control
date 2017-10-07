@@ -117,14 +117,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DeviceHandler.cpp" />
     <ClCompile Include="InfinityPortal.cpp" />
     <ClCompile Include="lightshow.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SkylandersPortal.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DeviceHandler.h" />
     <ClInclude Include="InfinityPortal.h" />
     <ClInclude Include="PortalAudio.h" />
     <ClInclude Include="SkylandersPortal.h" />
