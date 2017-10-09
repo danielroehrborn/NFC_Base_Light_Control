@@ -130,6 +130,8 @@
     <ClCompile Include="lightshow.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SkylandersPortal.cpp" />
+    <ClCompile Include="Tutorial.cpp" />
+    <ClCompile Include="Tutorial2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InfinityPortal.h" />

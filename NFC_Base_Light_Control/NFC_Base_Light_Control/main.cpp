@@ -14,7 +14,12 @@ using namespace std;
 /*
 *
 */
+extern int tutorial();
+
 int main(int argc, char** argv) {
+
+	tutorial();
+	return 0;
 
 	srand(time(NULL));
 
@@ -42,31 +47,7 @@ int main(int argc, char** argv) {
 			continue;
 		}
 
-
-		unsigned char* data = NULL;
-		/*	libusb_device_handle *dev_handle,
-			uint8_t request_type,
-			uint8_t bRequest,
-			uint16_t wValue,
-			uint16_t wIndex,
-			unsigned char *data,
-			uint16_t wLength,
-			unsigned int timeout);*/
-		retVal = libusb_control_transfer(deviceHandler,
-			LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE | LIBUSB_ENDPOINT_IN,
-			0x09,
-			(2 << 8) | 'C',
-			0,
-			(unsigned char *)data, 32,
-			50);
-
-
-
-		int len;
-		retVal = libusb_bulk_transfer(deviceHandler, 0x81, data, 32, &len, 100);
-
-
-
+	
 		libusb_get_device_descriptor(devices[i], &descriptor);
 
 		if (descriptor.idVendor == 0x0e6f && descriptor.idProduct == 0x0129) {
