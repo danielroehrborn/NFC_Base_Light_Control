@@ -194,22 +194,47 @@ int main(int argc, char** argv) {
 		}
 
 		if (j < infinityPortalCount) {
+			infinityPortals[j].fadeColour(0, 8, 1, 0, 0, 0);
+			infinityPortals[j].fadeColour(1, 10, 1, 20, 0, 0);
+			infinityPortals[j].fadeColour(2, 10, 1, 0, 20, 0);
+			infinityPortals[j].fadeColour(3, 10, 1, 0, 0, 20);
 			for (int k = 0; k < 3; k++) {
 				//infinityPortals[j].setColour(k + 1, std::rand()/*random()*/ % 0x100, std::rand()/*random()*/ % 0x100, std::rand()/*random()*/ % 0x100);
+				/*infinityPortals[j].fadeColour(0, 8, 1, 0, 0, 0);
+				infinityPortals[j].flashColour(0, 1, 2, 4, 2, 2, 2);
+				infinityPortals[j].flashColour(0, 1, 3, 4, 2, 2, 2);
+				infinityPortals[j].fadeColour(0, 8, 1, 0, 0, 0);
+				infinityPortals[j].fadeColour(1, 10, 1, 10, 0, 0);
+				infinityPortals[j].fadeColour(2, 10, 1, 0, 10, 0);
+				infinityPortals[j].fadeColour(3, 10, 1, 0, 0, 10);
 				infinityPortals[j].setColour(k + 1, 10, 10, 10);
+				infinityPortals[j].fadeColour(0, 8, 1, 0, 0, 0);
+				infinityPortals[j].getTagId();*/
 			}
 		}
 
 		if (j < dimensionsPortalCount) {
-			dimensionsPortals[j].fadeColour(1, 20, 0, 0);
-			dimensionsPortals[j].fadeColour(2, 0, 20, 0);
-			dimensionsPortals[j].fadeColour(3, 0, 0, 20);
-			dimensionsPortals[j].flashColour(1, 20, 20, 0);
-			dimensionsPortals[j].flashColour(2, 0, 20, 20);
-			dimensionsPortals[j].flashColour(3, 20, 0, 20);
+			dimensionsPortals[j].color(center, { 10,0,0 });
+			dimensionsPortals[j].fade(Platform::left, { 0,10,1,{0,10,0} });
+			dimensionsPortals[j].flash(Platform::right, { 0,2,2,5,{0,0,10} });
+			dimensionsPortals[j].colorGroup({ 1,{1,5,5} }, { 0,{1,1,1} }, { 1,{5,5,5} });
+			dimensionsPortals[j].fadeGroup({ 0,10,1,{10,0,10} }, { 1,10,1,{ 10,0,10 } }, { 1,10,1,{ 10,10,0 } });
+			dimensionsPortals[j].flashGroup({ 1,1,1,4,{2,0,0} }, { 1,1,1,4,{ 2,0,0 } }, { 0,1,1,4,{ 2,0,0 } });
+			dimensionsPortals[j].fade(center, { 0,10,1,{ 0,0,0 } });
+			Sleep(200);
+			dimensionsPortals[j].fade(Platform::left, { 0,10,1,{ 0,0,0 } });
+			Sleep(200);
+			dimensionsPortals[j].fade(Platform::right, { 0,10,1,{ 0,0,0 } });
+			Sleep(500);
+			dimensionsPortals[j].fade(Platform::center, { 0,10,1,{ 10,0,0 } });
+			Sleep(200);
+			dimensionsPortals[j].fade(Platform::left, { 0,10,1,{ 0,10,0 } });
+			Sleep(200);
+			dimensionsPortals[j].fade(Platform::right, { 0,10,1,{ 0,0,10 } });
+			dimensionsPortals[j].fade(all, { 0,0xff,0xff,{ 0,0,0 } });
 			for (int k = 0; k < 3; k++) {
 				//dimensionsPortals[j].setColour(k + 1, std::rand()/*random()*/ % 0x100, std::rand()/*random()*/ % 0x100, std::rand()/*random()*/ % 0x100);
-				dimensionsPortals[j].setColour(k + 1, 1, 1, 1);
+				//dimensionsPortals[j].setColour(k + 1, 1, 1, 1);
 			}
 		}
 	}

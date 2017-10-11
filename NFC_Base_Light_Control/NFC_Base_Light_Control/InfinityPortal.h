@@ -21,8 +21,8 @@ public:
 	virtual ~InfinityPortal();
 	libusb_device_handle* deviceHandler;
 	void setColour(char platform, char r, char g, char b);
-	void flashColour(char platform, char r, char g, char b);
-	void fadeColour(char platform, char r, char g, char b);
+	void flashColour(char platform, unsigned char onLen, unsigned char offLen, unsigned char pulseCnt, char r, char g, char b);
+	void fadeColour(char platform, unsigned char pulseLen, unsigned char pulseCnt, char r, char g, char b);
 	void activate();
 	void getTagId();
 private:

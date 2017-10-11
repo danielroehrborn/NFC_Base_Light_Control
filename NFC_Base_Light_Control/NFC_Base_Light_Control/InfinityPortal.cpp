@@ -60,7 +60,7 @@ libusb_device_handle* InfinityPortal::connect(int deviceId) {
 void InfinityPortal::getTagId() {
 
 	// ff 03 b4 26 00 dc 02 06 ff 00 00 ca 36 f1 2c 70 00 00 00 00 36 e7 3c 90 00 00 00 00 00 00 00 00
-	unsigned char* packet = new unsigned char[32];
+	unsigned char packet[32];
 
 	packet[0] = 0xff;
 	packet[1] = 0x03;
@@ -173,16 +173,16 @@ int InfinityPortal::receivePackets() {
 	return packetsReceived;
 }
 
-void InfinityPortal::fadeColour(char platform, char r, char g, char b) {
-	unsigned char* packet = new unsigned char[32];
+void InfinityPortal::fadeColour(char platform, unsigned char pulseLen, unsigned char pulseCnt, char r, char g, char b) {
+	unsigned char packet[32];
 
 	packet[0] = 0xFF; // header 1
 	packet[1] = 0x08; // header 2
 	packet[2] = 0x92; // header 3
 	packet[3] = 0x0a; // inc
 	packet[4] = platform; // panel
-	packet[5] = 0x10; // unknown
-	packet[6] = 0x02; // unknown
+	packet[5] = pulseLen;
+	packet[6] = pulseCnt;
 
 	packet[7] = r;
 	packet[8] = g;
@@ -281,7 +281,7 @@ void InfinityPortal::setColour(char platform, char r, char g, char b) {
 	sendPacket(packet);
 }
 
-void InfinityPortal::flashColour(char platform, char r, char g, char b) {
+void InfinityPortal::flashColour(char platform, unsigned char onLen, unsigned char offLen, unsigned char pulseCnt, char r, char g, char b) {
 
 	// ff 09 93 07 02 02 02 06 ff 00 00 ad 36 f1 2c 70 00 00 00 00 36 e7 3c 90 28 00 00 44 00 00 00 00
 
@@ -292,9 +292,9 @@ void InfinityPortal::flashColour(char platform, char r, char g, char b) {
 	packet[2] = 0x93;
 	packet[3] = 0x07;
 	packet[4] = platform;
-	packet[5] = 0x02;
-	packet[6] = 0x02;
-	packet[7] = 0x06;
+	packet[5] = onLen;
+	packet[6] = offLen;
+	packet[7] = pulseCnt;
 	packet[8] = r; // r
 	packet[9] = g; // g
 	packet[10] = b; // b

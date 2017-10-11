@@ -9,6 +9,31 @@
 #include <cstdlib>
 #include <math.h>
 
+class RGB {
+public:
+	const unsigned char r, g, b;
+};
+class Color {
+public:
+	const unsigned char enable;
+	const RGB rgb;
+};
+class Flash {
+public:
+	const unsigned char enable, onLen, offLen, pulseCnt;
+	const RGB rgb;
+};
+class Fade {
+public:
+	const unsigned char enable, fadeLen, pulseCnt;
+	const RGB rgb;
+};
+enum Platform {
+	all = 0,
+	center = 1,
+	left = 2,
+	right = 3
+};
 class DimensionsPortal {
 public:
 	static const unsigned char numFunctions;
@@ -17,12 +42,14 @@ public:
 	DimensionsPortal(int deviceId);
 	virtual ~DimensionsPortal();
 	libusb_device_handle* deviceHandler;
-	void setColour(char platform, char r, char g, char b);
-	void flashColour(char platform, char r, char g, char b);
-	void fadeColour(char platform, char r, char g, char b);
+	void color(Platform p, RGB rgbVal);
+	void flash(Platform p, Flash flashVal);
+	void fade(Platform p, Fade fadeVal);
+	void colorGroup(Color center, Color left, Color right);
+	void flashGroup(Flash center, Flash left, Flash right);
+	void fadeGroup(Fade center, Fade left, Fade right);
 	void activate();
-	void getTagId();
-private:
+	void test();
 	void processReceivedPacket(unsigned char* packet);
 	void sendPacket(unsigned char* packet);
 	int receivePackets();
