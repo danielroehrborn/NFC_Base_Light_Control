@@ -1,11 +1,11 @@
-#include "InfinityPortal.h"
+#include "DimensionsPortal.h"
 
-const unsigned char InfinityPortal::numFunctions = 5;
-const char* InfinityPortal::functionNames[5] = {
+const unsigned char DimensionsPortal::numFunctions = 5;
+const char* DimensionsPortal::functionNames[5] = {
 	"activate","setColour","flashColour","fadeColour","getTagId"
 };
 
-InfinityPortal::InfinityPortal(int deviceId) {
+DimensionsPortal::DimensionsPortal(int deviceId) {
 
 	// printf("Device id: %d\n",deviceId);
 	deviceHandler = connect(deviceId);
@@ -30,11 +30,11 @@ InfinityPortal::InfinityPortal(int deviceId) {
 	activate();
 }
 
-InfinityPortal::InfinityPortal() {
+DimensionsPortal::DimensionsPortal() {
 
 }
 
-libusb_device_handle* InfinityPortal::connect(int deviceId) {
+libusb_device_handle* DimensionsPortal::connect(int deviceId) {
 
 	libusb_device** devices;
 	libusb_context* context;
@@ -51,13 +51,13 @@ libusb_device_handle* InfinityPortal::connect(int deviceId) {
 
 	libusb_get_device_descriptor(devices[deviceId], &descriptor);
 
-	if (descriptor.idVendor == 0x0e6f && descriptor.idProduct == 0x0129) {
+	if (descriptor.idVendor == 0x0e6f && descriptor.idProduct == 0x0241) {
 
 		return tryDeviceHandler;
 	}
 }
 
-void InfinityPortal::getTagId() {
+void DimensionsPortal::getTagId() {
 
 	// ff 03 b4 26 00 dc 02 06 ff 00 00 ca 36 f1 2c 70 00 00 00 00 36 e7 3c 90 00 00 00 00 00 00 00 00
 	unsigned char* packet = new unsigned char[32];
@@ -97,7 +97,7 @@ void InfinityPortal::getTagId() {
 	sendPacket(packet);
 }
 
-void InfinityPortal::sendPacket(unsigned char* packet) {
+void DimensionsPortal::sendPacket(unsigned char* packet) {
 
 	int len;
 	int retVal = -1;
@@ -117,7 +117,7 @@ void InfinityPortal::sendPacket(unsigned char* packet) {
 
 }
 
-void InfinityPortal::processReceivedPacket(unsigned char* packet) {
+void DimensionsPortal::processReceivedPacket(unsigned char* packet) {
 
 	if (packet[0x00] == 0xab) {
 		// printf("Something was placed somewhere!\n");
@@ -154,7 +154,7 @@ void InfinityPortal::processReceivedPacket(unsigned char* packet) {
 
 }
 
-int InfinityPortal::receivePackets() {
+int DimensionsPortal::receivePackets() {
 
 	int packetsReceived = 0;
 	int retVal = 0;
@@ -173,42 +173,47 @@ int InfinityPortal::receivePackets() {
 	return packetsReceived;
 }
 
-void InfinityPortal::fadeColour(char platform, char r, char g, char b) {
-	unsigned char* packet = new unsigned char[32];
+void DimensionsPortal::fadeColour(char platform, char r, char g, char b) {
+	unsigned char packet[32];
 
-	packet[0] = 0xFF; // header 1
-	packet[1] = 0x08; // header 2
-	packet[2] = 0x92; // header 3
-	packet[3] = 0x0a; // inc
-	packet[4] = platform; // panel
-	packet[5] = 0x10; // unknown
-	packet[6] = 0x02; // unknown
+	packet[0] = 0x55;//start
+	packet[1] = 0x14;//len
+	packet[2] = 0xc6;//command
+	packet[3] = 0x26;//msg count
 
-	packet[7] = r;
-	packet[8] = g;
-	packet[9] = b;
+	//platform 1
+	packet[4] = platform == 0 || platform == 1 ? 0x01 : 0; //enable
+	packet[5] = 10;//fade time
+	packet[6] = 5; //pulse count
+	packet[7] = r; //r
+	packet[8] = g; //g
+	packet[9] = b; //b
+
+	//platform 2
+	packet[10] = platform == 0 || platform == 2 ? 0x01 : 0; //enable
+	packet[11] = 10;//fade time
+	packet[12] = 5; //pulse count
+	packet[13] = r; //r
+	packet[14] = g; //g
+	packet[15] = b; //b
+
+	//platform 3
+	packet[16] = platform == 0 || platform == 3 ? 0x01 : 0; //enable
+	packet[17] = 10;//fade time
+	packet[18] = 5; //pulse count
+	packet[19] = r; //r
+	packet[20] = g; //g
+	packet[21] = b; //b
 
 	int checksum = 0;
-	for (int l = 0; l < 10; l++) {
+	for (int l = 0; l < 22; l++) {
 		checksum += packet[l];
 	}
 
 	checksum = checksum & 0xFF;
 
-	packet[10] = checksum; // checksum
-	packet[11] = 0x00; // unknown and seemingly useless from here on
-	packet[12] = 0x02;
-	packet[13] = 0x2a;
-	packet[14] = 0x32;
-	packet[15] = 0x80;
-	packet[16] = 0x00;
-	packet[17] = 0x00;
-	packet[18] = 0x00;
-	packet[19] = 0x00;
-	packet[20] = 0x36;
-	packet[21] = 0xe7;
-	packet[22] = 0x3c;
-	packet[23] = 0x90;
+	packet[22] = checksum;
+	packet[23] = 0x00;
 	packet[24] = 0x00;
 	packet[25] = 0x00;
 	packet[26] = 0x00;
@@ -221,30 +226,35 @@ void InfinityPortal::fadeColour(char platform, char r, char g, char b) {
 	sendPacket(packet);
 }
 
-InfinityPortal::~InfinityPortal() {
+DimensionsPortal::~DimensionsPortal() {
 
 }
 
-void InfinityPortal::activate() {
-	unsigned char packet[] = { 0xff,0x11,0x80,0x00,0x28,0x63,0x29,0x20,0x44,0x69,0x73,0x6e,0x65,0x79,0x20,0x32,0x30,0x31,0x33,0xb6,0x30,0x6f,0xcb,0x40,0x30,0x6a,0x44,0x20,0x30,0x5c,0x6f,0x00 };
+void DimensionsPortal::activate() {
+	unsigned char packet[] = {
+		0x55,0x0f,0xb0,0x01,0x28,0x63,0x29,0x20,
+		0x4c,0x45,0x47,0x4f,0x20,0x32,0x30,0x31,
+		0x34,0xf7,0x00,0x00,0x00,0x00,0x00,0x00,
+		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
+	};
 	sendPacket(packet);
 }
 
-void InfinityPortal::setColour(char platform, char r, char g, char b) {
+void DimensionsPortal::setColour(char platform, char r, char g, char b) {
 
 	// ff 06 90 41 02 00 00 00 d8 00 00 00 36 f1 2c 70 00 00 00 00 36 e7 3c 90 00 00 00 00 00 00 00 00
 
 	unsigned char* packet = new unsigned char[32];
 
-	packet[0] = 0xff;
+	packet[0] = 0x55;
 	packet[1] = 0x06; // packet length
-	packet[2] = 0x90; // weird packet length
-	packet[3] = 0x41;
+	packet[2] = 0xc0;
+	packet[3] = 0x02;
 	packet[4] = platform; // platform
 	packet[5] = r; // r
 	packet[6] = g; // g
 	packet[7] = b; // b
-	// packet[8] = 0xd8;
+				   // packet[8] = 0xd8;
 
 	int checksum = 0;
 	for (int l = 0; l < 8; l++) {
@@ -281,48 +291,51 @@ void InfinityPortal::setColour(char platform, char r, char g, char b) {
 	sendPacket(packet);
 }
 
-void InfinityPortal::flashColour(char platform, char r, char g, char b) {
+void DimensionsPortal::flashColour(char platform, char r, char g, char b) {
+	unsigned char packet[32];
 
-	// ff 09 93 07 02 02 02 06 ff 00 00 ad 36 f1 2c 70 00 00 00 00 36 e7 3c 90 28 00 00 44 00 00 00 00
+	packet[0] = 0x55;//start
+	packet[1] = 0x17;//len
+	packet[2] = 0xc7;//command
+	packet[3] = 0x30;//msg count
 
-	unsigned char* packet = new unsigned char[32];
+	//platform 1
+	packet[4] = platform == 0 || platform == 1 ? 0x01 : 0; //enable
+	packet[5] = 10;//on len
+	packet[6] = 5; //off len
+	packet[7] = 5; //pulse count
+	packet[8] = r; //r
+	packet[9] = g; //g
+	packet[10] = b; //b
 
-	packet[0] = 0xFF;
-	packet[1] = 0x09; // packet length after this
-	packet[2] = 0x93;
-	packet[3] = 0x07;
-	packet[4] = platform;
-	packet[5] = 0x02;
-	packet[6] = 0x02;
-	packet[7] = 0x06;
-	packet[8] = r; // r
-	packet[9] = g; // g
-	packet[10] = b; // b
+	//platform 2
+	packet[11] = platform == 0 || platform == 2 ? 0x01 : 0; //enable
+	packet[12] = 10;//on len
+	packet[13] = 5; //off len
+	packet[14] = 5; //pulse count
+	packet[15] = r; //r
+	packet[16] = g; //g
+	packet[17] = b; //b
+
+	//platform 3
+	packet[18] = platform == 0 || platform == 3 ? 0x01 : 0; //enable
+	packet[19] = 10;//on len
+	packet[20] = 5; //off len
+	packet[21] = 5; //pulse count
+	packet[22] = r; //r
+	packet[23] = g; //g
+	packet[24] = b; //b
 
 	int checksum = 0;
-
-	for (int l = 0; l < 11; l++) {
+	for (int l = 0; l < 25; l++) {
 		checksum += packet[l];
 	}
 
-	packet[11] = checksum & 0xff;
+	checksum = checksum & 0xFF;
 
-	packet[12] = 0x36;
-	packet[13] = 0xf1;
-	packet[14] = 0x2c;
-	packet[15] = 0x70;
-	packet[16] = 0x00;
-	packet[17] = 0x00;
-	packet[18] = 0x00;
-	packet[19] = 0x00;
-	packet[20] = 0x36;
-	packet[21] = 0xe7;
-	packet[22] = 0x3c;
-	packet[23] = 0x90;
-	packet[24] = 0x28;
-	packet[25] = 0x00;
+	packet[25] = checksum;
 	packet[26] = 0x00;
-	packet[27] = 0x44;
+	packet[27] = 0x00;
 	packet[28] = 0x00;
 	packet[29] = 0x00;
 	packet[30] = 0x00;

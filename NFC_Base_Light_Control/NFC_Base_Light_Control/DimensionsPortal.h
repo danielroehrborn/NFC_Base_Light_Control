@@ -1,7 +1,4 @@
 #pragma once
-#ifndef INFINITYPORTAL_H
-#define	INFINITYPORTAL_H
-
 #include <stdio.h>
 #include "libusb.h"
 #include <string.h>
@@ -12,13 +9,13 @@
 #include <cstdlib>
 #include <math.h>
 
-class InfinityPortal {
+class DimensionsPortal {
 public:
 	static const unsigned char numFunctions;
 	static const char* functionNames[5];
-	InfinityPortal();
-	InfinityPortal(int deviceId);
-	virtual ~InfinityPortal();
+	DimensionsPortal();
+	DimensionsPortal(int deviceId);
+	virtual ~DimensionsPortal();
 	libusb_device_handle* deviceHandler;
 	void setColour(char platform, char r, char g, char b);
 	void flashColour(char platform, char r, char g, char b);
@@ -31,5 +28,3 @@ private:
 	int receivePackets();
 	libusb_device_handle* connect(int deviceId);
 };
-
-#endif
