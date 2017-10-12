@@ -55,3 +55,15 @@ public:
 	int receivePackets();
 	libusb_device_handle* connect(int deviceId);
 };
+
+class DimensionsPortalInput {
+public:
+	unsigned char data[32] = { 0 };
+	unsigned char* activate();
+	unsigned char* color(Platform p, RGB rgbVal);
+	unsigned char* flash(Platform p, Flash flashVal);
+	unsigned char* fade(Platform p, Fade fadeVal);
+	unsigned char* colorGroup(Color center, Color left, Color right);
+	unsigned char* flashGroup(Flash center, Flash left, Flash right);
+	unsigned char* fadeGroup(Fade center, Fade left, Fade right);
+};

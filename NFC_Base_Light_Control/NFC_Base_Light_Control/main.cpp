@@ -10,6 +10,7 @@
 #include "InfinityPortal.h"
 #include "SkylandersPortal.h"
 #include "DimensionsPortal.h"
+#include "PortalConnection.h"
 
 using namespace std;
 extern int tutorial();
@@ -96,8 +97,51 @@ int mainx(int argc, char** argv) {
 	libusb_exit(context);
 	return 0;
 }
-
 int main(int argc, char** argv) {
+	libusb_init(&context);
+	libusb_device** devices;
+	int devicesCount = libusb_get_device_list(context, &devices);
+	struct libusb_device_descriptor descriptor;
+	libusb_device_handle* deviceHandler = NULL;
+	for (int i = 0; i < devicesCount; i++) {
+		libusb_get_device_descriptor(devices[i], &descriptor);
+		if (descriptor.idVendor == 0x0e6f && descriptor.idProduct == 0x241) {
+			printf("Found Lego Dimensions portal at %d\n", i);
+			PortalConnection ld1;
+			libusb_error ret = ld1.connect(devices[i]);
+			if (ret != LIBUSB_SUCCESS) {
+				printf("LegoDimensionsPortal Connect: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+			}
+			else {
+				DimensionsPortalInput ld1data;
+				ret = ld1.sendData(ld1data.activate());
+				if (ret != LIBUSB_SUCCESS) {
+					printf("LegoDimensionsPortal Activate: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+				}
+				char repeat = 2;
+				do {
+					ret = ld1.sendData(ld1data.fade(Platform::center, { 0,10,1,{ 0,0,0 } }));
+					Sleep(250);
+					ret = ld1.sendData(ld1data.fade(Platform::left, { 0,10,1,{ 0,0,0 } }));
+					Sleep(250);
+					ret = ld1.sendData(ld1data.fade(Platform::right, { 0,10,1,{ 0,0,0 } }));
+					Sleep(500);
+					ret = ld1.sendData(ld1data.fade(Platform::center, { 0,10,1,{ 20,0,0 } }));
+					Sleep(250);
+					ret = ld1.sendData(ld1data.fade(Platform::left, { 0,10,1,{ 0,20,0 } }));
+					Sleep(250);
+					ret = ld1.sendData(ld1data.fade(Platform::right, { 0,10,1,{ 0,0,20 } }));
+					Sleep(500);
+				} while (repeat--);
+				ret = ld1.sendData(ld1data.fade(all, { 0,50,0xff,{ 0,0,0 } }));
+			}
+		}
+	}
+	libusb_exit(context);
+	return 0;
+}
+
+int mainy(int argc, char** argv) {
 	//tutorial();
 	//return 0;	
 	libusb_init(&context);
@@ -231,7 +275,7 @@ int main(int argc, char** argv) {
 			dimensionsPortals[j].fade(Platform::left, { 0,10,1,{ 0,10,0 } });
 			Sleep(200);
 			dimensionsPortals[j].fade(Platform::right, { 0,10,1,{ 0,0,10 } });
-			dimensionsPortals[j].fade(all, { 0,0xff,0xff,{ 0,0,0 } });
+			dimensionsPortals[j].fade(all, { 0,50,0xff,{ 0,0,0 } });
 			for (int k = 0; k < 3; k++) {
 				//dimensionsPortals[j].setColour(k + 1, std::rand()/*random()*/ % 0x100, std::rand()/*random()*/ % 0x100, std::rand()/*random()*/ % 0x100);
 				//dimensionsPortals[j].setColour(k + 1, 1, 1, 1);

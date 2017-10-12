@@ -130,6 +130,7 @@
     <ClCompile Include="InfinityPortal.cpp" />
     <ClCompile Include="lightshow.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PortalConnection.cpp" />
     <ClCompile Include="SkylandersPortal.cpp" />
     <ClCompile Include="Tutorial.cpp" />
     <ClCompile Include="Tutorial2.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="DimensionsPortal.h" />
     <ClInclude Include="InfinityPortal.h" />
     <ClInclude Include="PortalAudio.h" />
+    <ClInclude Include="PortalConnection.h" />
     <ClInclude Include="SkylandersPortal.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

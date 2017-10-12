@@ -70,7 +70,7 @@ void DimensionsPortal::sendPacket(unsigned char* packet) {
 	int len;
 	int retVal = -1;
 
-	receivePackets();
+	//receivePackets();
 
 	while (retVal < 0) {
 		retVal = libusb_bulk_transfer(deviceHandler, 0x01, packet, 32, &len, 100);
@@ -132,6 +132,11 @@ int DimensionsPortal::receivePackets() {
 
 		retVal = libusb_bulk_transfer(deviceHandler, 0x81, packet, 32, &len, 10);
 		if (retVal == 0) {
+			/*printf("\nReceived:\n");
+			for (int i = 0; i < 32; ++i) {
+				if (i % 8 == 0) printf("\n");
+				printf("%X ");
+			}*/
 			processReceivedPacket(packet);
 			packetsReceived += 1;
 		}
@@ -167,7 +172,7 @@ void DimensionsPortal::color(Platform p, RGB rgbVal) {
 	packet[0] = 0x55; //start
 	packet[1] = 0x06; //command length
 	packet[2] = 0xc0; //command
-	packet[3] = 0x02; //message counter
+	packet[3] = 0x02;
 	packet[4] = p; //platform
 	packet[5] = rgbVal.r; // r
 	packet[6] = rgbVal.g; // g
@@ -179,7 +184,7 @@ void DimensionsPortal::flash(Platform p, Flash flashVal) {
 	packet[0] = 0x55; //start
 	packet[1] = 0x09; //command length
 	packet[2] = 0xc3; //command
-	packet[3] = 0x1f; //message counter
+	packet[3] = 0x1f;
 	packet[4] = p; //platform
 	packet[5] = flashVal.onLen; //light on length
 	packet[6] = flashVal.offLen; //light off length
@@ -194,7 +199,7 @@ void DimensionsPortal::fade(Platform p, Fade fadeVal) {
 	packet[0] = 0x55; //start
 	packet[1] = 0x08; //command length
 	packet[2] = 0xc2; //command
-	packet[3] = 0x0f; //message counter
+	packet[3] = 0x0f;
 	packet[4] = p; //platform
 	packet[5] = fadeVal.fadeLen; //fading duration
 	packet[6] = fadeVal.pulseCnt; //number of pulses
@@ -208,7 +213,7 @@ void DimensionsPortal::colorGroup(Color center, Color left, Color right) {
 	packet[0] = 0x55; //start
 	packet[1] = 0x0e; //command length
 	packet[2] = 0xc8; //command
-	packet[3] = 0x06; //message counter
+	packet[3] = 0x06;
 	//center platform
 	packet[4] = center.enable; //enable
 	packet[5] = center.rgb.r;
@@ -231,7 +236,7 @@ void DimensionsPortal::flashGroup(Flash center, Flash left, Flash right) {
 	packet[0] = 0x55; //start
 	packet[1] = 0x17; //command length
 	packet[2] = 0xc7; //command
-	packet[3] = 0x3e; //message counter
+	packet[3] = 0x3e;
 	//center platform
 	packet[4] = center.enable;
 	packet[5] = center.onLen;
@@ -263,8 +268,8 @@ void DimensionsPortal::fadeGroup(Fade center, Fade left, Fade right) {
 	packet[0] = 0x55; //start
 	packet[1] = 0x14; //command length
 	packet[2] = 0xc6; //command
-	packet[3] = 0x26; //message counter
-					  //center platform
+	packet[3] = 0x26;
+	//center platform
 	packet[4] = center.enable;
 	packet[5] = center.fadeLen;
 	packet[6] = center.pulseCnt;
@@ -459,3 +464,151 @@ void DimensionsPortal::fade(char platform, char r, char g, char b) {
 	sendPacket(packet);
 }
 */
+
+
+unsigned char* DimensionsPortalInput::activate() {
+	data[0] = 0x55;
+	data[1] = 0x0f;
+	data[2] = 0xb0;
+	data[3] = 0x01;
+	data[4] = 0x28;
+	data[5] = 0x63;
+	data[6] = 0x29;
+	data[7] = 0x20;
+	data[8] = 0x4c;
+	data[9] = 0x45;
+	data[10] = 0x47;
+	data[11] = 0x4f;
+	data[12] = 0x20;
+	data[13] = 0x32;
+	data[14] = 0x30;
+	data[15] = 0x31;
+	data[16] = 0x34;
+	data[17] = 0xf7;
+	return data;
+}
+unsigned char* DimensionsPortalInput::color(Platform p, RGB rgbVal) {
+	data[0] = 0x55; //start
+	data[1] = 0x06; //command length
+	data[2] = 0xc0; //command
+	data[3] = 0x02;
+	data[4] = p; //platform
+	data[5] = rgbVal.r; // r
+	data[6] = rgbVal.g; // g
+	data[7] = rgbVal.b; // b
+	setChecksum(data);
+	return data;
+}
+unsigned char* DimensionsPortalInput::flash(Platform p, Flash flashVal) {
+	data[0] = 0x55; //start
+	data[1] = 0x09; //command length
+	data[2] = 0xc3; //command
+	data[3] = 0x1f;
+	data[4] = p; //platform
+	data[5] = flashVal.onLen; //light on length
+	data[6] = flashVal.offLen; //light off length
+	data[7] = flashVal.pulseCnt; //number of pulses
+	data[8] = flashVal.rgb.r; // r
+	data[9] = flashVal.rgb.g; // g
+	data[10] = flashVal.rgb.b; // b
+	setChecksum(data);
+	return data;
+}
+unsigned char* DimensionsPortalInput::fade(Platform p, Fade fadeVal) {
+	data[0] = 0x55; //start
+	data[1] = 0x08; //command length
+	data[2] = 0xc2; //command
+	data[3] = 0x0f;
+	data[4] = p; //platform
+	data[5] = fadeVal.fadeLen; //fading duration
+	data[6] = fadeVal.pulseCnt; //number of pulses
+	data[7] = fadeVal.rgb.r; // r
+	data[8] = fadeVal.rgb.g; // g
+	data[9] = fadeVal.rgb.b; // b
+	setChecksum(data);
+	return data;
+}
+unsigned char* DimensionsPortalInput::colorGroup(Color center, Color left, Color right) {
+	data[0] = 0x55; //start
+	data[1] = 0x0e; //command length
+	data[2] = 0xc8; //command
+	data[3] = 0x06;
+	//center platform
+	data[4] = center.enable; //enable
+	data[5] = center.rgb.r;
+	data[6] = center.rgb.g;
+	data[7] = center.rgb.b;
+	//left platform
+	data[8] = left.enable; //enable
+	data[9] = left.rgb.r;
+	data[10] = left.rgb.g;
+	data[11] = left.rgb.b;
+	//right platform
+	data[12] = right.enable; //enable
+	data[13] = right.rgb.r;
+	data[14] = right.rgb.g;
+	data[15] = right.rgb.b;
+	setChecksum(data);
+	return data;
+}
+unsigned char* DimensionsPortalInput::flashGroup(Flash center, Flash left, Flash right) {
+	data[0] = 0x55; //start
+	data[1] = 0x17; //command length
+	data[2] = 0xc7; //command
+	data[3] = 0x3e;
+	//center platform
+	data[4] = center.enable;
+	data[5] = center.onLen;
+	data[6] = center.offLen;
+	data[7] = center.pulseCnt;
+	data[8] = center.rgb.r;
+	data[9] = center.rgb.g;
+	data[10] = center.rgb.b;
+	//left platform
+	data[11] = left.enable;
+	data[12] = left.onLen;
+	data[13] = left.offLen;
+	data[14] = left.pulseCnt;
+	data[15] = left.rgb.r;
+	data[16] = left.rgb.g;
+	data[17] = left.rgb.b;
+	//right platform
+	data[18] = right.enable;
+	data[19] = right.onLen;
+	data[20] = right.offLen;
+	data[21] = right.pulseCnt;
+	data[22] = right.rgb.r;
+	data[23] = right.rgb.g;
+	data[24] = right.rgb.b;
+	setChecksum(data);
+	return data;
+}
+unsigned char* DimensionsPortalInput::fadeGroup(Fade center, Fade left, Fade right) {
+	data[0] = 0x55; //start
+	data[1] = 0x14; //command length
+	data[2] = 0xc6; //command
+	data[3] = 0x26;
+	//center platform
+	data[4] = center.enable;
+	data[5] = center.fadeLen;
+	data[6] = center.pulseCnt;
+	data[7] = center.rgb.r;
+	data[8] = center.rgb.g;
+	data[9] = center.rgb.b;
+	//left platform
+	data[10] = left.enable;
+	data[11] = left.fadeLen;
+	data[12] = left.pulseCnt;
+	data[13] = left.rgb.r;
+	data[14] = left.rgb.g;
+	data[15] = left.rgb.b;
+	//right platform
+	data[16] = right.enable;
+	data[17] = right.fadeLen;
+	data[18] = right.pulseCnt;
+	data[19] = right.rgb.r;
+	data[20] = right.rgb.g;
+	data[21] = right.rgb.b;
+	setChecksum(data);
+	return data;
+}

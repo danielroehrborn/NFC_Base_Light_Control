@@ -36,6 +36,9 @@
     <ClCompile Include="DimensionsPortal.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="PortalConnection.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InfinityPortal.h">
@@ -48,6 +51,9 @@
       <Filter>Quelldateien</Filter>
     </ClInclude>
     <ClInclude Include="DimensionsPortal.h">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="PortalConnection.h">
       <Filter>Quelldateien</Filter>
     </ClInclude>
   </ItemGroup>
