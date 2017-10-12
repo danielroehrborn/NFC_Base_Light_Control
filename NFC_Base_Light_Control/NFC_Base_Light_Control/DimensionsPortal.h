@@ -8,6 +8,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <math.h>
+#include "PortalConnection.h"
 
 class RGB {
 public:
@@ -56,9 +57,33 @@ public:
 	libusb_device_handle* connect(int deviceId);
 };
 
-class DimensionsPortalInput {
+class DimensionsPortalInterface {
+public:
+	virtual unsigned char* activate() = 0;
+	virtual unsigned char* color(Platform p, RGB rgbVal) = 0;
+	virtual unsigned char* flash(Platform p, Flash flashVal) = 0;
+	virtual unsigned char* fade(Platform p, Fade fadeVal) = 0;
+	virtual unsigned char* colorGroup(Color center, Color left, Color right) = 0;
+	virtual unsigned char* flashGroup(Flash center, Flash left, Flash right) = 0;
+	virtual unsigned char* fadeGroup(Fade center, Fade left, Fade right) = 0;
+};
+
+class DimensionsPortalInput : public DimensionsPortalInterface {
 public:
 	unsigned char data[32] = { 0 };
+	unsigned char* activate();
+	unsigned char* color(Platform p, RGB rgbVal);
+	unsigned char* flash(Platform p, Flash flashVal);
+	unsigned char* fade(Platform p, Fade fadeVal);
+	unsigned char* colorGroup(Color center, Color left, Color right);
+	unsigned char* flashGroup(Flash center, Flash left, Flash right);
+	unsigned char* fadeGroup(Fade center, Fade left, Fade right);
+};
+
+class DimensionsPortalCommandLineControl : public DimensionsPortalInterface {
+	DimensionsPortalInput impl;
+public:
+	void printMenu(PortalConnection* pc);
 	unsigned char* activate();
 	unsigned char* color(Platform p, RGB rgbVal);
 	unsigned char* flash(Platform p, Flash flashVal);

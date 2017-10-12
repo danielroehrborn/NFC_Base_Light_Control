@@ -1,4 +1,5 @@
 #include "DimensionsPortal.h"
+#include <iostream>
 
 const unsigned char DimensionsPortal::numFunctions = 5;
 const char* DimensionsPortal::functionNames[5] = {
@@ -611,4 +612,101 @@ unsigned char* DimensionsPortalInput::fadeGroup(Fade center, Fade left, Fade rig
 	data[21] = right.rgb.b;
 	setChecksum(data);
 	return data;
+}
+
+void DimensionsPortalCommandLineControl::printMenu(PortalConnection* pc) {
+	while (1) {
+		int i = 0;
+		printf("\n\nMenu\n");
+		printf("%d. activate\n", ++i);
+		printf("%d. color\n", ++i);
+		printf("%d. flash\n", ++i);
+		printf("%d. fade\n", ++i);
+		printf("%d. colorGroup\n", ++i);
+		printf("%d. flashGroup\n", ++i);
+		printf("%d. fadeGroup\n", ++i);
+		printf("%d. quit\n", ++i);
+		printf("Choose: ");
+		std::cin >> i;
+		std::cout << std::endl;
+		switch (i) {
+		case 1:
+			pc->sendData(activate());
+			break;
+		case 2:
+			pc->sendData(color(all, { 0,0,0 }));
+			break;
+		case 3:
+			pc->sendData(flash(all, { 0,0,0,0,{0,0,0} }));
+			break;
+		case 4:
+			pc->sendData(fade(all, { 0,0,0,{0,0,0} }));
+			break;
+		case 5:
+			pc->sendData(colorGroup({ 0,{0,0,0} }, { 0,{0,0,0} }, { 0,{0,0,0} }));
+			break;
+		case 6:
+			pc->sendData(flashGroup({ 0,0,0,0,{0,0,0} }, { 0,0,0,0,{ 0,0,0 } }, { 0,0,0,0,{ 0,0,0 } }));
+			break;
+		case 7:
+			pc->sendData(fadeGroup({ 0,0,0,{0,0,0} }, { 0,0,0,{ 0,0,0 } }, { 0,0,0,{ 0,0,0 } }));
+			break;
+		case 8:
+			return;
+		}
+	}
+}
+unsigned char* DimensionsPortalCommandLineControl::activate() {
+	printf("Activate\n");
+	return impl.activate();
+}
+unsigned char* DimensionsPortalCommandLineControl::color(Platform p, RGB rgbVal) {
+	printf("Color\n");
+	printf("Type platform (0:all, 1: center, 2: left, 3: right: ");
+	int platform, r, g, b;
+	std::cin >> platform;
+	std::cout << std::endl;
+	printf("Type red (0-255): ");
+	std::cin >> r;
+	std::cout << std::endl;
+	printf("Type green (0-255): ");
+	std::cin >> g;
+	std::cout << std::endl;
+	printf("Type blue(0-255): ");
+	std::cin >> b;
+	std::cout << std::endl;
+	return impl.color((Platform)platform, { (unsigned char)r,(unsigned char)g,(unsigned char)b });
+}
+unsigned char* DimensionsPortalCommandLineControl::flash(Platform p, Flash flashVal) {
+	printf("Flash\n");
+	return impl.flash(p, flashVal);
+}
+unsigned char* DimensionsPortalCommandLineControl::fade(Platform p, Fade fadeVal) {
+	printf("Fade\n");
+	printf("Type platform (0:all, 1: center, 2: left, 3: right: ");
+	int platform, fadeLen, pulseCnt, r, g, b;
+	std::cin >> platform;
+	printf("Type fade length (0-255): ");
+	std::cin >> fadeLen;
+	printf("Type pulse count (0-255): ");
+	std::cin >> pulseCnt;
+	printf("Type red (0-255): ");
+	std::cin >> r;
+	printf("Type green (0-255): ");
+	std::cin >> g;
+	printf("Type blue(0-255): ");
+	std::cin >> b;
+	return impl.fade((Platform)platform, { 1,(unsigned char)fadeLen,(unsigned char)pulseCnt,{ (unsigned char)r,(unsigned char)g,(unsigned char)b} });
+}
+unsigned char* DimensionsPortalCommandLineControl::colorGroup(Color center, Color left, Color right) {
+	printf("ColorGroup\n");
+	return impl.colorGroup(center, left, right);
+}
+unsigned char* DimensionsPortalCommandLineControl::flashGroup(Flash center, Flash left, Flash right) {
+	printf("FlashGroup\n");
+	return impl.flashGroup(center, left, right);
+}
+unsigned char* DimensionsPortalCommandLineControl::fadeGroup(Fade center, Fade left, Fade right) {
+	printf("FadeGroup\n");
+	return impl.fadeGroup(center, left, right);
 }

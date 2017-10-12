@@ -113,27 +113,30 @@ int main(int argc, char** argv) {
 				printf("LegoDimensionsPortal Connect: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
 			}
 			else {
-				DimensionsPortalInput ld1data;
-				ret = ld1.sendData(ld1data.activate());
+				DimensionsPortalInterface* ld1data = new DimensionsPortalInput;
+				ret = ld1.sendData(ld1data->activate());
 				if (ret != LIBUSB_SUCCESS) {
 					printf("LegoDimensionsPortal Activate: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
 				}
 				char repeat = 2;
 				do {
-					ret = ld1.sendData(ld1data.fade(Platform::center, { 0,10,1,{ 0,0,0 } }));
+					ret = ld1.sendData(ld1data->fade(Platform::center, { 0,10,1,{ 0,0,0 } }));
 					Sleep(250);
-					ret = ld1.sendData(ld1data.fade(Platform::left, { 0,10,1,{ 0,0,0 } }));
+					ret = ld1.sendData(ld1data->fade(Platform::left, { 0,10,1,{ 0,0,0 } }));
 					Sleep(250);
-					ret = ld1.sendData(ld1data.fade(Platform::right, { 0,10,1,{ 0,0,0 } }));
+					ret = ld1.sendData(ld1data->fade(Platform::right, { 0,10,1,{ 0,0,0 } }));
 					Sleep(500);
-					ret = ld1.sendData(ld1data.fade(Platform::center, { 0,10,1,{ 20,0,0 } }));
+					ret = ld1.sendData(ld1data->fade(Platform::center, { 0,10,1,{ 20,0,0 } }));
 					Sleep(250);
-					ret = ld1.sendData(ld1data.fade(Platform::left, { 0,10,1,{ 0,20,0 } }));
+					ret = ld1.sendData(ld1data->fade(Platform::left, { 0,10,1,{ 0,20,0 } }));
 					Sleep(250);
-					ret = ld1.sendData(ld1data.fade(Platform::right, { 0,10,1,{ 0,0,20 } }));
+					ret = ld1.sendData(ld1data->fade(Platform::right, { 0,10,1,{ 0,0,20 } }));
 					Sleep(500);
 				} while (repeat--);
-				ret = ld1.sendData(ld1data.fade(all, { 0,50,0xff,{ 0,0,0 } }));
+				ret = ld1.sendData(ld1data->fade(all, { 0,50,0xff,{ 0,0,0 } }));
+				delete ld1data;
+				DimensionsPortalCommandLineControl cmd;
+				cmd.printMenu(&ld1);
 			}
 		}
 	}
