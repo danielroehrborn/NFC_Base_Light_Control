@@ -32,4 +32,36 @@ private:
 	libusb_device_handle* connect(int deviceId);
 };
 
+class InfinityBaseInput {
+public:
+	class RGB {
+	public:
+		const unsigned char r, g, b;
+	};
+	class Fade {
+	public:
+		const unsigned char fadeLen, pulseCnt;
+		const RGB rgb;
+	};
+	class Flash {
+	public:
+		const unsigned char onLen, offLen, pulseCnt;
+		const RGB rgb;
+	};
+	enum Platform {
+		all = 0,
+		center = 1,
+		left = 2,
+		right = 3
+	};
+	unsigned char data[32] = { 0 };
+	unsigned char* activate();
+	unsigned char* color(Platform p, RGB rgbVal);
+	unsigned char* flash(Platform p, Flash flashVal);
+	unsigned char* fade(Platform p, Fade fadeVal);
+	unsigned char* getTagId();
+private:
+	void setChecksum();
+};
+
 #endif

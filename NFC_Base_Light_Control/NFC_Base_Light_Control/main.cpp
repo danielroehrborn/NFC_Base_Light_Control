@@ -114,29 +114,262 @@ int main(int argc, char** argv) {
 			}
 			else {
 				DimensionsPortalInterface* ld1data = new DimensionsPortalInput;
-				ret = ld1.sendData(ld1data->activate());
+				ret = ld1.transceiveData(ld1data->activate());
 				if (ret != LIBUSB_SUCCESS) {
 					printf("LegoDimensionsPortal Activate: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
 				}
 				char repeat = 2;
 				do {
-					ret = ld1.sendData(ld1data->fade(Platform::center, { 0,10,1,{ 0,0,0 } }));
+					ret = ld1.transceiveData(ld1data->fade(Platform::center, { 0,10,1,{ 0,0,0 } }));
 					Sleep(250);
-					ret = ld1.sendData(ld1data->fade(Platform::left, { 0,10,1,{ 0,0,0 } }));
+					ret = ld1.transceiveData(ld1data->fade(Platform::left, { 0,10,1,{ 0,0,0 } }));
 					Sleep(250);
-					ret = ld1.sendData(ld1data->fade(Platform::right, { 0,10,1,{ 0,0,0 } }));
+					ret = ld1.transceiveData(ld1data->fade(Platform::right, { 0,10,1,{ 0,0,0 } }));
 					Sleep(500);
-					ret = ld1.sendData(ld1data->fade(Platform::center, { 0,10,1,{ 20,0,0 } }));
+					ret = ld1.transceiveData(ld1data->fade(Platform::center, { 0,10,1,{ 20,0,0 } }));
 					Sleep(250);
-					ret = ld1.sendData(ld1data->fade(Platform::left, { 0,10,1,{ 0,20,0 } }));
+					ret = ld1.transceiveData(ld1data->fade(Platform::left, { 0,10,1,{ 0,20,0 } }));
 					Sleep(250);
-					ret = ld1.sendData(ld1data->fade(Platform::right, { 0,10,1,{ 0,0,20 } }));
+					ret = ld1.transceiveData(ld1data->fade(Platform::right, { 0,10,1,{ 0,0,20 } }));
 					Sleep(500);
 				} while (repeat--);
-				ret = ld1.sendData(ld1data->fade(all, { 0,50,0xff,{ 0,0,0 } }));
+				ret = ld1.transceiveData(ld1data->fade(all, { 0,50,0xff,{ 0,0,0 } }));
 				delete ld1data;
 				DimensionsPortalCommandLineControl cmd;
 				cmd.printMenu(&ld1);
+			}
+		}
+		else if (descriptor.idVendor == 0x0e6f && descriptor.idProduct == 0x0129) {
+			PortalConnection di1;
+			libusb_error ret = di1.connect(devices[i]);
+			if (ret != LIBUSB_SUCCESS) {
+				printf("DisneyInfinity Connect: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+			}
+			else {
+				InfinityBaseInput di1data;
+				//activate
+				printf("Send Activate\n");
+				ret = di1.transceiveData(di1data.activate());
+				if (ret != LIBUSB_SUCCESS) {
+					printf("DisneyInfinity Activate: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+				}
+				do {
+					ret = di1.transceiveData(di1data.data, 0x81);
+					if (ret == LIBUSB_SUCCESS) {
+						printf("ReceivedData:\n");
+						for (int i = 0; i < 32; ++i)printf("0x%X ", di1data.data[i]);
+					}
+				} while (ret == 0);
+				Sleep(1000);
+
+				//color all
+				printf("Send ColorAll\n");
+				ret = di1.transceiveData(di1data.color(InfinityBaseInput::Platform::all, { 10,10,10 }));
+				if (ret != LIBUSB_SUCCESS) {
+					printf("DisneyInfinity ColorAll: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+				}
+				do {
+					ret = di1.transceiveData(di1data.data, 0x81);
+					if (ret == LIBUSB_SUCCESS) {
+						printf("ReceivedData:\n");
+						for (int i = 0; i < 32; ++i)printf("0x%X ", di1data.data[i]);
+					}
+				} while (ret == 0);
+				Sleep(1000);
+
+				//color center
+				printf("Send ColorCenter\n");
+				ret = di1.transceiveData(di1data.color(InfinityBaseInput::Platform::center, { 10,0,0 }));
+				if (ret != LIBUSB_SUCCESS) {
+					printf("DisneyInfinity ColorCenter: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+				}
+				do {
+					ret = di1.transceiveData(di1data.data, 0x81);
+					if (ret == LIBUSB_SUCCESS) {
+						printf("ReceivedData:\n");
+						for (int i = 0; i < 32; ++i)printf("0x%X ", di1data.data[i]);
+					}
+				} while (ret == 0);
+				Sleep(1000);
+
+				//color left
+				printf("Send ColorLeft\n");
+				ret = di1.transceiveData(di1data.color(InfinityBaseInput::Platform::left, { 0,10,0 }));
+				if (ret != LIBUSB_SUCCESS) {
+					printf("DisneyInfinity ColorLeft: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+				}
+				do {
+					ret = di1.transceiveData(di1data.data, 0x81);
+					if (ret == LIBUSB_SUCCESS) {
+						printf("ReceivedData:\n");
+						for (int i = 0; i < 32; ++i)printf("0x%X ", di1data.data[i]);
+					}
+				} while (ret == 0);
+				Sleep(1000);
+
+				//color right
+				printf("Send ColorRight\n");
+				ret = di1.transceiveData(di1data.color(InfinityBaseInput::Platform::right, { 0,0,10 }));
+				if (ret != LIBUSB_SUCCESS) {
+					printf("DisneyInfinity ColorRight: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+				}
+				do {
+					ret = di1.transceiveData(di1data.data, 0x81);
+					if (ret == LIBUSB_SUCCESS) {
+						printf("ReceivedData:\n");
+						for (int i = 0; i < 32; ++i)printf("0x%X ", di1data.data[i]);
+					}
+				} while (ret == 0);
+				Sleep(1000);
+
+				//fade all
+				printf("Send FadeAll\n");
+				ret = di1.transceiveData(di1data.fade(InfinityBaseInput::Platform::all, { 20,2, {0,0,0} }));
+				if (ret != LIBUSB_SUCCESS) {
+					printf("DisneyInfinity FadeAll: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+				}
+				do {
+					ret = di1.transceiveData(di1data.data, 0x81);
+					if (ret == LIBUSB_SUCCESS) {
+						printf("ReceivedData:\n");
+						for (int i = 0; i < 32; ++i)printf("0x%X ", di1data.data[i]);
+					}
+				} while (ret == 0);
+				Sleep(1000);
+
+				//fade center
+				printf("Send FadeCenter\n");
+				ret = di1.transceiveData(di1data.fade(InfinityBaseInput::Platform::center, { 20,2,{ 0,0,0 } }));
+				if (ret != LIBUSB_SUCCESS) {
+					printf("DisneyInfinity FadeCenter: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+				}
+				do {
+					ret = di1.transceiveData(di1data.data, 0x81);
+					if (ret == LIBUSB_SUCCESS) {
+						printf("ReceivedData:\n");
+						for (int i = 0; i < 32; ++i)printf("0x%X ", di1data.data[i]);
+					}
+				} while (ret == 0);
+				Sleep(1000);
+
+				//fade left
+				printf("Send FadeLeft\n");
+				ret = di1.transceiveData(di1data.fade(InfinityBaseInput::Platform::left, { 20,2,{ 0,0,0 } }));
+				if (ret != LIBUSB_SUCCESS) {
+					printf("DisneyInfinity FadeLeft: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+				}
+				do {
+					ret = di1.transceiveData(di1data.data, 0x81);
+					if (ret == LIBUSB_SUCCESS) {
+						printf("ReceivedData:\n");
+						for (int i = 0; i < 32; ++i)printf("0x%X ", di1data.data[i]);
+					}
+				} while (ret == 0);
+				Sleep(1000);
+
+				//fade right
+				printf("Send FadeRight\n");
+				ret = di1.transceiveData(di1data.fade(InfinityBaseInput::Platform::right, { 20,2,{ 0,0,0 } }));
+				if (ret != LIBUSB_SUCCESS) {
+					printf("DisneyInfinity FadeRight: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+				}
+				do {
+					ret = di1.transceiveData(di1data.data, 0x81);
+					if (ret == LIBUSB_SUCCESS) {
+						printf("ReceivedData:\n");
+						for (int i = 0; i < 32; ++i)printf("0x%X ", di1data.data[i]);
+					}
+				} while (ret == 0);
+				Sleep(1000);
+
+				//flash all
+				printf("Send FlashAll\n");
+				ret = di1.transceiveData(di1data.flash(InfinityBaseInput::Platform::all, { 1,2,4,{ 10,10,10 } }));
+				if (ret != LIBUSB_SUCCESS) {
+					printf("DisneyInfinity FlashAll: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+				}
+				do {
+					ret = di1.transceiveData(di1data.data, 0x81);
+					if (ret == LIBUSB_SUCCESS) {
+						printf("ReceivedData:\n");
+						for (int i = 0; i < 32; ++i)printf("0x%X ", di1data.data[i]);
+					}
+				} while (ret == 0);
+				Sleep(1000);
+
+				//flash center
+				printf("Send FlashCenter\n");
+				ret = di1.transceiveData(di1data.flash(InfinityBaseInput::Platform::center, { 1,2,4,{ 10,10,10 } }));
+				if (ret != LIBUSB_SUCCESS) {
+					printf("DisneyInfinity FlashCenter: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+				}
+				do {
+					ret = di1.transceiveData(di1data.data, 0x81);
+					if (ret == LIBUSB_SUCCESS) {
+						printf("ReceivedData:\n");
+						for (int i = 0; i < 32; ++i)printf("0x%X ", di1data.data[i]);
+					}
+				} while (ret == 0);
+				Sleep(1000);
+
+				//flash left
+				printf("Send FlashLeft\n");
+				ret = di1.transceiveData(di1data.flash(InfinityBaseInput::Platform::left, { 1,2,4,{ 10,10,10 } }));
+				if (ret != LIBUSB_SUCCESS) {
+					printf("DisneyInfinity FlashLeft: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+				}
+				do {
+					ret = di1.transceiveData(di1data.data, 0x81);
+					if (ret == LIBUSB_SUCCESS) {
+						printf("ReceivedData:\n");
+						for (int i = 0; i < 32; ++i)printf("0x%X ", di1data.data[i]);
+					}
+				} while (ret == 0);
+				Sleep(1000);
+
+				//flash right
+				printf("Send FlashRight\n");
+				ret = di1.transceiveData(di1data.flash(InfinityBaseInput::Platform::right, { 1,2,4,{ 10,10,10 } }));
+				if (ret != LIBUSB_SUCCESS) {
+					printf("DisneyInfinity FlashRight: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+				}
+				do {
+					ret = di1.transceiveData(di1data.data, 0x81);
+					if (ret == LIBUSB_SUCCESS) {
+						printf("ReceivedData:\n");
+						for (int i = 0; i < 32; ++i)printf("0x%X ", di1data.data[i]);
+					}
+				} while (ret == 0);
+				Sleep(1000);
+
+				while (1) {
+					int cnt = 0;
+					//send get tagID
+					printf("Send getTagID\n");
+					ret = di1.transceiveData(di1data.getTagId());
+					if (ret != LIBUSB_SUCCESS) {
+						printf("DisneyInfinity GetTagID: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+					}
+					do {
+						ret = di1.transceiveData(di1data.data, 0x81, 32, 1000);
+						if (ret == LIBUSB_SUCCESS) {
+							//printf("ReceivedData:\n");
+							if (++cnt % 10 == 0) {
+								printf("Send getTagID\n");
+								ret = di1.transceiveData(di1data.getTagId());
+								if (ret != LIBUSB_SUCCESS) {
+									printf("DisneyInfinity GetTagID: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+								}
+							}
+							if (di1data.data[0] == 0xAA) {
+								for (int i = 0; i < 32; ++i)printf("0x%X ", di1data.data[i]); printf("\n");
+							}
+							if (di1data.data[0] == 0xAB)printf("2: %X  3: %X  4: %X  5: %X\n", di1data.data[2], di1data.data[3], di1data.data[4], di1data.data[5]);
+						}
+						else Sleep(500);
+					} while (1);// (ret == 0);
+					Sleep(2000);
+				}
 			}
 		}
 	}

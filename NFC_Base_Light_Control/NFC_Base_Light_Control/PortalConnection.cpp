@@ -27,14 +27,15 @@ libusb_error PortalConnection::connect(libusb_device* device, int interfaceNum) 
 	}
 	return ret;
 }
-libusb_error PortalConnection::sendData(unsigned char *data, unsigned char endpoint, int length, unsigned int timeout) {
+libusb_error PortalConnection::transceiveData(unsigned char *data, unsigned char endpoint, int length, unsigned int timeout) {
 	int actual_length = 0;
 	libusb_error ret = (libusb_error)libusb_bulk_transfer(deviceHandle, endpoint, data, length, &actual_length, timeout);
-	if (ret == LIBUSB_SUCCESS) {
+	/*if (ret == LIBUSB_SUCCESS) {
 		printf("Transmitted : %d bytes \n", actual_length);
-	}else {
-		printf("Transfer: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
 	}
+	else {
+		printf("Transfer: %s\n\t%s\n", libusb_error_name(ret), libusb_strerror(ret));
+	}*/
 	return ret;
 }
 PortalConnection::~PortalConnection() {

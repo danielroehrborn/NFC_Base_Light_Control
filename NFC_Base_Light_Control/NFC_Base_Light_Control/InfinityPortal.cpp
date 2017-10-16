@@ -331,3 +331,110 @@ void InfinityPortal::flashColour(char platform, unsigned char onLen, unsigned ch
 	sendPacket(packet);
 }
 
+
+
+
+
+unsigned char * InfinityBaseInput::activate()
+{
+	data[0] = 0xff; //start
+	data[1] = 0x11; //length
+	data[2] = 0x80; //command
+	data[3] = 0x00; //message counter
+	data[4] = 0x28; //'('
+	data[5] = 0x63; //'c'
+	data[6] = 0x29; //')'
+	data[7] = 0x20; //' '
+	data[8] = 0x44; //'D'
+	data[9] = 0x69; //'i'
+	data[10] = 0x73;//'s'
+	data[11] = 0x6e;//'n'
+	data[12] = 0x65;//'e'
+	data[13] = 0x79;//'y'
+	data[14] = 0x20;//' '
+	data[15] = 0x32;//'2'
+	data[16] = 0x30;//'0'
+	data[17] = 0x31;//'1'
+	data[18] = 0x33;//'3'
+	data[19] = 0xb6;//checksum
+	data[20] = 0x30;
+	data[21] = 0x6f;
+	data[22] = 0xcb;
+	data[23] = 0x40;
+	data[24] = 0x30;//alles weg
+	data[25] = 0x6a;
+	data[26] = 0x44;
+	data[27] = 0x20;
+	data[28] = 0x30;
+	data[29] = 0x5c;
+	data[30] = 0x6f;
+	data[31] = 0x00;
+	return data;
+}
+unsigned char * InfinityBaseInput::color(Platform p, RGB rgbVal)
+{
+	data[0] = 0xff; //start
+	data[1] = 0x06; //length
+	data[2] = 0x90; //command
+	data[3] = 0x41; //message counter
+	data[4] = p; //platform
+	data[5] = rgbVal.r; //red
+	data[6] = rgbVal.g; //green
+	data[7] = rgbVal.b; //blue
+	data[8] = 0; //checksum
+	setChecksum();
+	return data;
+}
+unsigned char * InfinityBaseInput::flash(Platform p, Flash flashVal)
+{
+	data[0] = 0xff; //start
+	data[1] = 0x09; //length
+	data[2] = 0x93; //command
+	data[3] = 0x07; //message counter
+	data[4] = p; //platform
+	data[5] = flashVal.onLen; //light on duration
+	data[6] = flashVal.offLen; //light off duration
+	data[7] = flashVal.pulseCnt; //number of light changes
+	data[8] = flashVal.rgb.r; //red
+	data[9] = flashVal.rgb.g; //green
+	data[10] = flashVal.rgb.b; //blue
+	data[11] = 0; //checksum
+	setChecksum();
+	return data;
+}
+unsigned char * InfinityBaseInput::fade(Platform p, Fade fadeVal)
+{
+	data[0] = 0xff; //start
+	data[1] = 0x08; //length
+	data[2] = 0x92; //command
+	data[3] = 0x0a; //message counter
+	data[4] = p; //platform
+	data[5] = fadeVal.fadeLen; //fading duration
+	data[6] = fadeVal.pulseCnt; //number of fadings
+	data[7] = fadeVal.rgb.r; //red
+	data[8] = fadeVal.rgb.g; //green
+	data[9] = fadeVal.rgb.b; //blue
+	data[10] = 0; //checksum
+	setChecksum();
+	return data;
+}
+unsigned char* InfinityBaseInput::getTagId()
+{
+	data[0] = 0xff; //start
+	data[1] = 0x03; //length
+	data[2] = 0xb4; //command
+	data[3] = 0x26; //message counter
+	data[3] = 0x00; //platform?
+	data[3] = 0xdc; //checksum
+	setChecksum();
+	return data;
+}
+void InfinityBaseInput::setChecksum()
+{
+	int checksum = 0;
+	for (int l = 0; l < data[1] + 2; l++) {
+		checksum += data[l];
+	}
+	checksum = checksum & 0xFF;
+	data[data[1] + 2] = checksum;
+}

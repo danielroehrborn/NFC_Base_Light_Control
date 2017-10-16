@@ -468,24 +468,24 @@ void DimensionsPortal::fade(char platform, char r, char g, char b) {
 
 
 unsigned char* DimensionsPortalInput::activate() {
-	data[0] = 0x55;
-	data[1] = 0x0f;
-	data[2] = 0xb0;
-	data[3] = 0x01;
-	data[4] = 0x28;
-	data[5] = 0x63;
-	data[6] = 0x29;
-	data[7] = 0x20;
-	data[8] = 0x4c;
-	data[9] = 0x45;
-	data[10] = 0x47;
-	data[11] = 0x4f;
-	data[12] = 0x20;
-	data[13] = 0x32;
-	data[14] = 0x30;
-	data[15] = 0x31;
-	data[16] = 0x34;
-	data[17] = 0xf7;
+	data[0] = 0x55; //start
+	data[1] = 0x0f; //length
+	data[2] = 0xb0; //command
+	data[3] = 0x01; 
+	data[4] = 0x28; //'('
+	data[5] = 0x63; //'c'
+	data[6] = 0x29; //')'
+	data[7] = 0x20; //' '
+	data[8] = 0x4c; //'L'
+	data[9] = 0x45; //'E'
+	data[10] = 0x47;//'G'
+	data[11] = 0x4f;//'O'
+	data[12] = 0x20;//' '
+	data[13] = 0x32;//'2'
+	data[14] = 0x30;//'0'
+	data[15] = 0x31;//'1'
+	data[16] = 0x34;//'4'
+	data[17] = 0xf7;//checksum
 	return data;
 }
 unsigned char* DimensionsPortalInput::color(Platform p, RGB rgbVal) {
@@ -631,25 +631,25 @@ void DimensionsPortalCommandLineControl::printMenu(PortalConnection* pc) {
 		std::cout << std::endl;
 		switch (i) {
 		case 1:
-			pc->sendData(activate());
+			pc->transceiveData(activate());
 			break;
 		case 2:
-			pc->sendData(color(all, { 0,0,0 }));
+			pc->transceiveData(color(all, { 0,0,0 }));
 			break;
 		case 3:
-			pc->sendData(flash(all, { 0,0,0,0,{0,0,0} }));
+			pc->transceiveData(flash(all, { 0,0,0,0,{0,0,0} }));
 			break;
 		case 4:
-			pc->sendData(fade(all, { 0,0,0,{0,0,0} }));
+			pc->transceiveData(fade(all, { 0,0,0,{0,0,0} }));
 			break;
 		case 5:
-			pc->sendData(colorGroup({ 0,{0,0,0} }, { 0,{0,0,0} }, { 0,{0,0,0} }));
+			pc->transceiveData(colorGroup({ 0,{0,0,0} }, { 0,{0,0,0} }, { 0,{0,0,0} }));
 			break;
 		case 6:
-			pc->sendData(flashGroup({ 0,0,0,0,{0,0,0} }, { 0,0,0,0,{ 0,0,0 } }, { 0,0,0,0,{ 0,0,0 } }));
+			pc->transceiveData(flashGroup({ 0,0,0,0,{0,0,0} }, { 0,0,0,0,{ 0,0,0 } }, { 0,0,0,0,{ 0,0,0 } }));
 			break;
 		case 7:
-			pc->sendData(fadeGroup({ 0,0,0,{0,0,0} }, { 0,0,0,{ 0,0,0 } }, { 0,0,0,{ 0,0,0 } }));
+			pc->transceiveData(fadeGroup({ 0,0,0,{0,0,0} }, { 0,0,0,{ 0,0,0 } }, { 0,0,0,{ 0,0,0 } }));
 			break;
 		case 8:
 			return;
