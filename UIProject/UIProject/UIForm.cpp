@@ -13,7 +13,7 @@ System::Void MyForm::MyForm_Load(System::Object^  sender, System::EventArgs^  e)
 	libusb_init(&usbcontext);
 	colorPlatformComboBox->SelectedIndex = 0;
 	comboBox2->SelectedIndex = 0;
-	textBox33->AppendText("Scan for devices, then choose one device to connect");
+	textBox33->AppendText("Scan for devices, then choose one device to connect. Activation needed once after connected to a USB port.");
 }
 bool closing = false;
 System::Void MyForm::MyForm_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
@@ -402,6 +402,7 @@ System::Void UIProject::MyForm::button17_Click(System::Object ^ sender, System::
 InfinityBaseInput di1data;
 System::Void UIProject::MyForm::button12_Click(System::Object ^ sender, System::EventArgs ^ e)
 {
+	textBox33->AppendText("\r\nActivation message");
 	unsigned char* messageData = di1data.activate();
 	String^ boxstr = gcnew String("");
 	for (int i = 0; i < 32; i++) {
@@ -478,7 +479,8 @@ System::Void UIProject::MyForm::button12_Click(System::Object ^ sender, System::
 }
 
 System::Void UIProject::MyForm::button13_Click(System::Object ^ sender, System::EventArgs ^ e)
-{//infinity color
+{
+	textBox33->AppendText("\r\nSet color r:" + textBox36->Text + " g:" + textBox35->Text + " b:" + textBox34->Text);
 	unsigned char r = int::Parse(textBox36->Text);
 	unsigned char g = int::Parse(textBox35->Text);
 	unsigned char b = int::Parse(textBox34->Text);
@@ -493,6 +495,7 @@ System::Void UIProject::MyForm::button13_Click(System::Object ^ sender, System::
 
 System::Void UIProject::MyForm::button14_Click(System::Object ^ sender, System::EventArgs ^ e)
 {
+	textBox33->AppendText("\r\nFade color to r:" + textBox36->Text + " g:" + textBox35->Text + " b:" + textBox34->Text);
 	unsigned char r = int::Parse(textBox36->Text);
 	unsigned char g = int::Parse(textBox35->Text);
 	unsigned char b = int::Parse(textBox34->Text);
@@ -509,6 +512,7 @@ System::Void UIProject::MyForm::button14_Click(System::Object ^ sender, System::
 
 System::Void UIProject::MyForm::button15_Click(System::Object ^ sender, System::EventArgs ^ e)
 {
+	textBox33->AppendText("\r\nFlash color to r:" + textBox36->Text + " g:" + textBox35->Text + " b:" + textBox34->Text);
 	unsigned char r = int::Parse(textBox36->Text);
 	unsigned char g = int::Parse(textBox35->Text);
 	unsigned char b = int::Parse(textBox34->Text);
@@ -526,6 +530,7 @@ System::Void UIProject::MyForm::button15_Click(System::Object ^ sender, System::
 
 System::Void UIProject::MyForm::button16_Click(System::Object ^ sender, System::EventArgs ^ e)
 {
+	textBox33->AppendText("\r\nRequest tag id");
 	unsigned char* messageData = di1data.getTagId();
 	String^ boxstr = gcnew String("");
 	for (int i = 0; i < 32; i++) {

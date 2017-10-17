@@ -551,7 +551,7 @@ private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel27;
 			// comboBox1
 			// 
 			this->comboBox1->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
-			this->comboBox1->DropDownWidth = 200;
+			this->comboBox1->DropDownWidth = 250;
 			this->comboBox1->FormattingEnabled = true;
 			this->comboBox1->Location = System::Drawing::Point(404, 3);
 			this->comboBox1->Name = L"comboBox1";
