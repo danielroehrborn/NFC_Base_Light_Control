@@ -60,9 +60,10 @@ libusb_error PortalConnection::claimOpenedDevice(int interfaceNum)
 	}
 	return ret;
 }
-libusb_error PortalConnection::transceiveData(unsigned char *data, unsigned char endpoint, int length, unsigned int timeout) {
-	int actual_length = 0;
-	libusb_error ret = (libusb_error)libusb_bulk_transfer(deviceHandle, endpoint, data, length, &actual_length, timeout);
+libusb_error PortalConnection::transceiveData(unsigned char *data, unsigned char endpoint, int length, int* actualLen, unsigned int timeout) {
+	int tmpActualLength = 0;
+	int* pActualLength = actualLen == NULL ? &tmpActualLength : actualLen;
+	libusb_error ret = (libusb_error)libusb_bulk_transfer(deviceHandle, endpoint, data, length, pActualLength, timeout);
 	/*if (ret == LIBUSB_SUCCESS) {
 		printf("Transmitted : %d bytes \n", actual_length);
 	}
