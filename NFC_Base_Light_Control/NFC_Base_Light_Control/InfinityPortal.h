@@ -61,6 +61,7 @@ public:
 	unsigned char* fade(Platform p, Fade fadeVal);
 	unsigned char* getTagId();
 private:
+	void clearBuffer();
 	void setChecksum();
 };
 

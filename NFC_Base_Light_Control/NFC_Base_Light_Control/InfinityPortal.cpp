@@ -334,9 +334,12 @@ void InfinityPortal::flashColour(char platform, unsigned char onLen, unsigned ch
 
 
 
-
+void InfinityBaseInput::clearBuffer() {
+	for (unsigned char i = 0; i < 32; ++i) data[i] = 0;
+}
 unsigned char * InfinityBaseInput::activate()
 {
+	clearBuffer();
 	data[0] = 0xff; //start
 	data[1] = 0x11; //length
 	data[2] = 0x80; //command
@@ -373,6 +376,7 @@ unsigned char * InfinityBaseInput::activate()
 }
 unsigned char * InfinityBaseInput::color(Platform p, RGB rgbVal)
 {
+	clearBuffer();
 	data[0] = 0xff; //start
 	data[1] = 0x06; //length
 	data[2] = 0x90; //command
@@ -387,6 +391,7 @@ unsigned char * InfinityBaseInput::color(Platform p, RGB rgbVal)
 }
 unsigned char * InfinityBaseInput::flash(Platform p, Flash flashVal)
 {
+	clearBuffer();
 	data[0] = 0xff; //start
 	data[1] = 0x09; //length
 	data[2] = 0x93; //command
@@ -404,6 +409,7 @@ unsigned char * InfinityBaseInput::flash(Platform p, Flash flashVal)
 }
 unsigned char * InfinityBaseInput::fade(Platform p, Fade fadeVal)
 {
+	clearBuffer();
 	data[0] = 0xff; //start
 	data[1] = 0x08; //length
 	data[2] = 0x92; //command
@@ -420,6 +426,7 @@ unsigned char * InfinityBaseInput::fade(Platform p, Fade fadeVal)
 }
 unsigned char* InfinityBaseInput::getTagId()
 {
+	clearBuffer();
 	data[0] = 0xff; //start
 	data[1] = 0x03; //length
 	data[2] = 0xb4; //command

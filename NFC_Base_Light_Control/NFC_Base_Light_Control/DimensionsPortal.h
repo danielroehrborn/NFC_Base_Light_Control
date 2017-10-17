@@ -78,6 +78,8 @@ public:
 	unsigned char* colorGroup(Color center, Color left, Color right);
 	unsigned char* flashGroup(Flash center, Flash left, Flash right);
 	unsigned char* fadeGroup(Fade center, Fade left, Fade right);
+private:
+	void clearBuffer();
 };
 
 class DimensionsPortalCommandLineControl : public DimensionsPortalInterface {

@@ -466,8 +466,11 @@ void DimensionsPortal::fade(char platform, char r, char g, char b) {
 }
 */
 
-
+void DimensionsPortalInput::clearBuffer() {
+	for (unsigned char i = 0; i < 32; ++i) data[i] = 0;
+}
 unsigned char* DimensionsPortalInput::activate() {
+	clearBuffer();
 	data[0] = 0x55; //start
 	data[1] = 0x0f; //length
 	data[2] = 0xb0; //command
@@ -489,6 +492,7 @@ unsigned char* DimensionsPortalInput::activate() {
 	return data;
 }
 unsigned char* DimensionsPortalInput::color(Platform p, RGB rgbVal) {
+	clearBuffer();
 	data[0] = 0x55; //start
 	data[1] = 0x06; //command length
 	data[2] = 0xc0; //command
@@ -501,6 +505,7 @@ unsigned char* DimensionsPortalInput::color(Platform p, RGB rgbVal) {
 	return data;
 }
 unsigned char* DimensionsPortalInput::flash(Platform p, Flash flashVal) {
+	clearBuffer();
 	data[0] = 0x55; //start
 	data[1] = 0x09; //command length
 	data[2] = 0xc3; //command
@@ -516,6 +521,7 @@ unsigned char* DimensionsPortalInput::flash(Platform p, Flash flashVal) {
 	return data;
 }
 unsigned char* DimensionsPortalInput::fade(Platform p, Fade fadeVal) {
+	clearBuffer();
 	data[0] = 0x55; //start
 	data[1] = 0x08; //command length
 	data[2] = 0xc2; //command
@@ -530,6 +536,7 @@ unsigned char* DimensionsPortalInput::fade(Platform p, Fade fadeVal) {
 	return data;
 }
 unsigned char* DimensionsPortalInput::colorGroup(Color center, Color left, Color right) {
+	clearBuffer();
 	data[0] = 0x55; //start
 	data[1] = 0x0e; //command length
 	data[2] = 0xc8; //command
@@ -553,6 +560,7 @@ unsigned char* DimensionsPortalInput::colorGroup(Color center, Color left, Color
 	return data;
 }
 unsigned char* DimensionsPortalInput::flashGroup(Flash center, Flash left, Flash right) {
+	clearBuffer();
 	data[0] = 0x55; //start
 	data[1] = 0x17; //command length
 	data[2] = 0xc7; //command
@@ -585,6 +593,7 @@ unsigned char* DimensionsPortalInput::flashGroup(Flash center, Flash left, Flash
 	return data;
 }
 unsigned char* DimensionsPortalInput::fadeGroup(Fade center, Fade left, Fade right) {
+	clearBuffer();
 	data[0] = 0x55; //start
 	data[1] = 0x14; //command length
 	data[2] = 0xc6; //command
