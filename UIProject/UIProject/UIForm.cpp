@@ -13,6 +13,7 @@ System::Void MyForm::MyForm_Load(System::Object^  sender, System::EventArgs^  e)
 	libusb_init(&usbcontext);
 	colorPlatformComboBox->SelectedIndex = 0;
 	comboBox2->SelectedIndex = 0;
+	textBox33->AppendText("Scan for devices, then choose one device to connect");
 }
 bool closing = false;
 System::Void MyForm::MyForm_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
@@ -55,6 +56,8 @@ System::Void UIProject::MyForm::ScanDevicesButton_Click(System::Object ^ sender,
 
 System::Void UIProject::MyForm::comboBox1_SelectionChangeCommitted(System::Object ^ sender, System::EventArgs ^ e)
 {
+	checkBox4->Checked = false;
+	checkBox5->Checked = false;
 	int interfaceNum = int::Parse(sendInterfaceTextBox->Text);
 	//libusb_error ret = connection.connect(usbdevices[comboBox1->SelectedIndex], interfaceNum);
 	libusb_error ret = connection->openDevice(usbdevices[comboBox1->SelectedIndex]);
@@ -82,74 +85,9 @@ DimensionsPortalInterface* ld1data = new DimensionsPortalInput;
 libusb_error ret;
 System::Void UIProject::MyForm::button4_Click(System::Object ^ sender, System::EventArgs ^ e)
 {
+	textBox33->AppendText("\r\nActivation message");
 	unsigned char* messageData = ld1data->activate();
 	String^ boxstr = gcnew String("");
-	for (int i = 0; i < 32; i++) {
-		boxstr += messageData[i].ToString("X2");
-	}
-	messageTextBox->Text = boxstr;
-	button6->PerformClick();
-
-	//test animation
-	char repeat = 2;
-	do {
-		messageData = ld1data->fade(Platform::center, { 0,10,1,{ 0,0,0 } });
-		boxstr = gcnew String("");
-		for (int i = 0; i < 32; i++) {
-			boxstr += messageData[i].ToString("X2");
-		}
-		messageTextBox->Text = boxstr;
-		button6->PerformClick();
-
-		System::Threading::Thread::Sleep(250);
-		messageData = ld1data->fade(Platform::left, { 0,10,1,{ 0,0,0 } });
-		boxstr = gcnew String("");
-		for (int i = 0; i < 32; i++) {
-			boxstr += messageData[i].ToString("X2");
-		}
-		messageTextBox->Text = boxstr;
-		button6->PerformClick();
-
-		System::Threading::Thread::Sleep(250);
-		messageData = ld1data->fade(Platform::right, { 0,10,1,{ 0,0,0 } });
-		boxstr = gcnew String("");
-		for (int i = 0; i < 32; i++) {
-			boxstr += messageData[i].ToString("X2");
-		}
-		messageTextBox->Text = boxstr;
-		button6->PerformClick();
-
-		System::Threading::Thread::Sleep(500);
-		messageData = ld1data->fade(Platform::center, { 0,10,1,{ 20,0,0 } });
-		boxstr = gcnew String("");
-		for (int i = 0; i < 32; i++) {
-			boxstr += messageData[i].ToString("X2");
-		}
-		messageTextBox->Text = boxstr;
-		button6->PerformClick();
-
-		System::Threading::Thread::Sleep(250);
-		messageData = ld1data->fade(Platform::left, { 0,10,1,{ 0,20,0 } });
-		boxstr = gcnew String("");
-		for (int i = 0; i < 32; i++) {
-			boxstr += messageData[i].ToString("X2");
-		}
-		messageTextBox->Text = boxstr;
-		button6->PerformClick();
-
-		System::Threading::Thread::Sleep(250);
-		messageData = ld1data->fade(Platform::right, { 0,10,1,{ 0,0,20 } });
-		boxstr = gcnew String("");
-		for (int i = 0; i < 32; i++) {
-			boxstr += messageData[i].ToString("X2");
-		}
-		messageTextBox->Text = boxstr;
-		button6->PerformClick();
-
-		System::Threading::Thread::Sleep(500);
-	} while (repeat--);
-	messageData = ld1data->fade(all, { 0,50,0xff,{ 0,0,0 } });
-	boxstr = gcnew String("");
 	for (int i = 0; i < 32; i++) {
 		boxstr += messageData[i].ToString("X2");
 	}
@@ -195,6 +133,7 @@ System::Void UIProject::MyForm::hScrollBar4_Scroll(System::Object ^ sender, Syst
 
 System::Void UIProject::MyForm::button5_Click(System::Object ^ sender, System::EventArgs ^ e)
 {
+	textBox33->AppendText("\r\nSet color r:" + textBox1->Text + " g:" + textBox2->Text + " b:" + textBox3->Text);
 	unsigned char r = int::Parse(textBox1->Text);
 	unsigned char g = int::Parse(textBox2->Text);
 	unsigned char b = int::Parse(textBox3->Text);
@@ -307,6 +246,7 @@ System::Void UIProject::MyForm::hScrollBar7_Scroll(System::Object ^ sender, Syst
 
 System::Void UIProject::MyForm::button7_Click(System::Object ^ sender, System::EventArgs ^ e)
 {
+	textBox33->AppendText("\r\nFade color to r:" + textBox1->Text + " g:" + textBox2->Text + " b:" + textBox3->Text);
 	unsigned char r = int::Parse(textBox1->Text);
 	unsigned char g = int::Parse(textBox2->Text);
 	unsigned char b = int::Parse(textBox3->Text);
@@ -325,6 +265,7 @@ System::Void UIProject::MyForm::button7_Click(System::Object ^ sender, System::E
 
 System::Void UIProject::MyForm::button8_Click(System::Object ^ sender, System::EventArgs ^ e)
 {
+	textBox33->AppendText("\r\nFlash color to r:" + textBox1->Text + " g:" + textBox2->Text + " b:" + textBox3->Text);
 	unsigned char r = int::Parse(textBox1->Text);
 	unsigned char g = int::Parse(textBox2->Text);
 	unsigned char b = int::Parse(textBox3->Text);
@@ -344,6 +285,9 @@ System::Void UIProject::MyForm::button8_Click(System::Object ^ sender, System::E
 
 System::Void UIProject::MyForm::button9_Click(System::Object ^ sender, System::EventArgs ^ e)
 {
+	textBox33->AppendText("\r\nSet group color r1:" + textBox11->Text + " g1:" + textBox10->Text + " b1:" + textBox9->Text +
+		"r2:" + textBox14->Text + " g2:" + textBox13->Text + " b2:" + textBox2->Text +
+		"r3:" + textBox17->Text + " g3:" + textBox16->Text + " b3:" + textBox5->Text);
 	unsigned char r1 = int::Parse(textBox11->Text);
 	unsigned char g1 = int::Parse(textBox10->Text);
 	unsigned char b1 = int::Parse(textBox9->Text);
@@ -369,6 +313,9 @@ System::Void UIProject::MyForm::button9_Click(System::Object ^ sender, System::E
 
 System::Void UIProject::MyForm::button10_Click(System::Object ^ sender, System::EventArgs ^ e)
 {
+	textBox33->AppendText("\r\nFade group color to r1:" + textBox11->Text + " g1:" + textBox10->Text + " b1:" + textBox9->Text +
+		"r2:" + textBox14->Text + " g2:" + textBox13->Text + " b2:" + textBox2->Text +
+		"r3:" + textBox17->Text + " g3:" + textBox16->Text + " b3:" + textBox5->Text);
 	unsigned char r1 = int::Parse(textBox11->Text);
 	unsigned char g1 = int::Parse(textBox10->Text);
 	unsigned char b1 = int::Parse(textBox9->Text);
@@ -397,6 +344,9 @@ System::Void UIProject::MyForm::button10_Click(System::Object ^ sender, System::
 
 System::Void UIProject::MyForm::button11_Click(System::Object ^ sender, System::EventArgs ^ e)
 {
+	textBox33->AppendText("\r\Flash group color to r1:" + textBox11->Text + " g1:" + textBox10->Text + " b1:" + textBox9->Text +
+		"r2:" + textBox14->Text + " g2:" + textBox13->Text + " b2:" + textBox2->Text +
+		"r3:" + textBox17->Text + " g3:" + textBox16->Text + " b3:" + textBox5->Text);
 	unsigned char r1 = int::Parse(textBox11->Text);
 	unsigned char g1 = int::Parse(textBox10->Text);
 	unsigned char b1 = int::Parse(textBox9->Text);
@@ -459,7 +409,7 @@ System::Void UIProject::MyForm::button12_Click(System::Object ^ sender, System::
 	}
 	messageTextBox->Text = boxstr;
 	button6->PerformClick();
-
+	/*
 	//test animation
 	char repeat = 2;
 	do {
@@ -524,7 +474,7 @@ System::Void UIProject::MyForm::button12_Click(System::Object ^ sender, System::
 		boxstr += messageData[i].ToString("X2");
 	}
 	messageTextBox->Text = boxstr;
-	button6->PerformClick();
+	button6->PerformClick();*/
 }
 
 System::Void UIProject::MyForm::button13_Click(System::Object ^ sender, System::EventArgs ^ e)
@@ -583,4 +533,120 @@ System::Void UIProject::MyForm::button16_Click(System::Object ^ sender, System::
 	}
 	messageTextBox->Text = boxstr;
 	button6->PerformClick();
+}
+
+System::Void UIProject::MyForm::button1_Click(System::Object ^ sender, System::EventArgs ^ e)
+{
+	unsigned char* messageData;
+	String^ boxstr = gcnew String("");
+	textBox33->AppendText("\r\nRunning demo animation");
+	char repeat = 1;
+	do {
+		colorPlatformComboBox->SelectedIndex = 1;//platform
+		hScrollBar2->Value = 0;//red
+		hScrollBar3->Value = 0;//green
+		hScrollBar4->Value = 0;//blue
+		textBox1->Text = String::Concat("0");//red
+		textBox2->Text = String::Concat("0");//green
+		textBox3->Text = String::Concat("0");//blue
+		textBox4->Text = String::Concat("10");//fadeLen
+		textBox5->Text = String::Concat("1");//numPulses
+		button7->PerformClick();//fade
+
+		System::Threading::Thread::Sleep(250);
+		colorPlatformComboBox->SelectedIndex = 2;//platform
+		button7->PerformClick();//fade
+
+		System::Threading::Thread::Sleep(250);
+		colorPlatformComboBox->SelectedIndex = 3;//platform
+		button7->PerformClick();//fade
+
+		System::Threading::Thread::Sleep(500);
+		colorPlatformComboBox->SelectedIndex = 1;//platform
+		textBox1->Text = String::Concat("20");//red
+		hScrollBar2->Value = 20;//red
+		button7->PerformClick();//fade
+
+		System::Threading::Thread::Sleep(250);
+		colorPlatformComboBox->SelectedIndex = 2;//platform
+		hScrollBar2->Value = 0;//red
+		hScrollBar3->Value = 20;//green
+		textBox1->Text = String::Concat("0");//red
+		textBox2->Text = String::Concat("20");//green
+		button7->PerformClick();//fade
+
+		System::Threading::Thread::Sleep(250);
+		colorPlatformComboBox->SelectedIndex = 3;//platform
+		hScrollBar3->Value = 0;//green
+		hScrollBar4->Value = 20;//blue
+		textBox2->Text = String::Concat("0");//green
+		textBox3->Text = String::Concat("20");//blue
+		button7->PerformClick();//fade
+
+		System::Threading::Thread::Sleep(500);
+	} while (--repeat);
+	colorPlatformComboBox->SelectedIndex = 0;//platform
+	hScrollBar4->Value = 0;//blue
+	textBox3->Text = String::Concat("0");//blue
+	textBox4->Text = String::Concat("40");//fadeLen
+	textBox5->Text = String::Concat("255");//numPulses
+	button7->PerformClick();//fade
+}
+
+System::Void UIProject::MyForm::button2_Click(System::Object ^ sender, System::EventArgs ^ e)
+{
+	unsigned char* messageData;
+	String^ boxstr = gcnew String("");
+	textBox33->AppendText("\r\nRunning demo animation");
+	char repeat = 1;
+	do {
+		comboBox2->SelectedIndex = 1;//platform
+		hScrollBar2->Value = 0;//red
+		hScrollBar3->Value = 0;//green
+		hScrollBar4->Value = 0;//blue
+		textBox36->Text = String::Concat("0");//red
+		textBox35->Text = String::Concat("0");//green
+		textBox34->Text = String::Concat("0");//blue
+		textBox38->Text = String::Concat("10");//fadeLen
+		textBox37->Text = String::Concat("1");//numPulses
+		button14->PerformClick();//fade
+
+		System::Threading::Thread::Sleep(250);
+		comboBox2->SelectedIndex = 2;//platform
+		button14->PerformClick();//fade
+
+		System::Threading::Thread::Sleep(250);
+		comboBox2->SelectedIndex = 3;//platform
+		button14->PerformClick();//fade
+
+		System::Threading::Thread::Sleep(500);
+		comboBox2->SelectedIndex = 1;//platform
+		textBox36->Text = String::Concat("20");//red
+		hScrollBar2->Value = 20;//red
+		button14->PerformClick();//fade
+
+		System::Threading::Thread::Sleep(250);
+		comboBox2->SelectedIndex = 2;//platform
+		hScrollBar2->Value = 0;//red
+		hScrollBar3->Value = 20;//green
+		textBox36->Text = String::Concat("0");//red
+		textBox35->Text = String::Concat("20");//green
+		button14->PerformClick();//fade
+
+		System::Threading::Thread::Sleep(250);
+		comboBox2->SelectedIndex = 3;//platform
+		hScrollBar3->Value = 0;//green
+		hScrollBar4->Value = 20;//blue
+		textBox35->Text = String::Concat("0");//green
+		textBox34->Text = String::Concat("20");//blue
+		button14->PerformClick();//fade
+
+		System::Threading::Thread::Sleep(500);
+	} while (--repeat);
+	comboBox2->SelectedIndex = 0;//platform
+	hScrollBar4->Value = 0;//blue
+	textBox34->Text = String::Concat("0");//blue
+	textBox38->Text = String::Concat("40");//fadeLen
+	textBox37->Text = String::Concat("255");//numPulses
+	button14->PerformClick();//fade
 }
