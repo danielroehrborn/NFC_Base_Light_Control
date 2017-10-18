@@ -275,7 +275,10 @@ namespace UIProject {
 	private: System::Windows::Forms::Button^  button1;
 	private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel1;
 	private: System::Windows::Forms::Button^  button2;
-private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel27;
+	private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel27;
+	private: System::Windows::Forms::TabPage^  tabPage3;
+	private: System::Windows::Forms::Button^  button3;
+	private: System::Windows::Forms::TreeView^  treeView1;
 
 
 
@@ -304,6 +307,8 @@ private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel27;
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			System::Windows::Forms::TreeNode^  treeNode1 = (gcnew System::Windows::Forms::TreeNode(L"Press \"Read descriptors\" to read available descriptors of all connected USB devic"
+				L"es"));
 			this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
 			this->ScanDevicesButton = (gcnew System::Windows::Forms::Button());
 			this->sendInterfaceTextBox = (gcnew System::Windows::Forms::TextBox());
@@ -470,6 +475,9 @@ private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel27;
 			this->label68 = (gcnew System::Windows::Forms::Label());
 			this->tabPage2 = (gcnew System::Windows::Forms::TabPage());
 			this->tableLayoutPanel25 = (gcnew System::Windows::Forms::TableLayoutPanel());
+			this->tableLayoutPanel27 = (gcnew System::Windows::Forms::TableLayoutPanel());
+			this->button2 = (gcnew System::Windows::Forms::Button());
+			this->button12 = (gcnew System::Windows::Forms::Button());
 			this->tableLayoutPanel16 = (gcnew System::Windows::Forms::TableLayoutPanel());
 			this->button16 = (gcnew System::Windows::Forms::Button());
 			this->label85 = (gcnew System::Windows::Forms::Label());
@@ -491,7 +499,6 @@ private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel27;
 			this->button14 = (gcnew System::Windows::Forms::Button());
 			this->textBox37 = (gcnew System::Windows::Forms::TextBox());
 			this->textBox38 = (gcnew System::Windows::Forms::TextBox());
-			this->button12 = (gcnew System::Windows::Forms::Button());
 			this->tableLayoutPanel12 = (gcnew System::Windows::Forms::TableLayoutPanel());
 			this->label96 = (gcnew System::Windows::Forms::Label());
 			this->label71 = (gcnew System::Windows::Forms::Label());
@@ -506,6 +513,9 @@ private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel27;
 			this->label69 = (gcnew System::Windows::Forms::Label());
 			this->label70 = (gcnew System::Windows::Forms::Label());
 			this->checkBox5 = (gcnew System::Windows::Forms::CheckBox());
+			this->tabPage3 = (gcnew System::Windows::Forms::TabPage());
+			this->button3 = (gcnew System::Windows::Forms::Button());
+			this->treeView1 = (gcnew System::Windows::Forms::TreeView());
 			this->label82 = (gcnew System::Windows::Forms::Label());
 			this->label83 = (gcnew System::Windows::Forms::Label());
 			this->label84 = (gcnew System::Windows::Forms::Label());
@@ -514,8 +524,6 @@ private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel27;
 			this->tableLayoutPanel26 = (gcnew System::Windows::Forms::TableLayoutPanel());
 			this->tableLayoutPanel24 = (gcnew System::Windows::Forms::TableLayoutPanel());
 			this->tableLayoutPanel23 = (gcnew System::Windows::Forms::TableLayoutPanel());
-			this->button2 = (gcnew System::Windows::Forms::Button());
-			this->tableLayoutPanel27 = (gcnew System::Windows::Forms::TableLayoutPanel());
 			this->tableLayoutPanel5->SuspendLayout();
 			this->tableLayoutPanel6->SuspendLayout();
 			this->tableLayoutPanel7->SuspendLayout();
@@ -536,16 +544,17 @@ private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel27;
 			this->tableLayoutPanel9->SuspendLayout();
 			this->tabPage2->SuspendLayout();
 			this->tableLayoutPanel25->SuspendLayout();
+			this->tableLayoutPanel27->SuspendLayout();
 			this->tableLayoutPanel16->SuspendLayout();
 			this->tableLayoutPanel14->SuspendLayout();
 			this->tableLayoutPanel13->SuspendLayout();
 			this->tableLayoutPanel12->SuspendLayout();
+			this->tabPage3->SuspendLayout();
 			this->tableLayoutPanel15->SuspendLayout();
 			this->tableLayoutPanel10->SuspendLayout();
 			this->tableLayoutPanel26->SuspendLayout();
 			this->tableLayoutPanel24->SuspendLayout();
 			this->tableLayoutPanel23->SuspendLayout();
-			this->tableLayoutPanel27->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// comboBox1
@@ -2051,6 +2060,7 @@ private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel27;
 			// 
 			this->tabControl1->Controls->Add(this->tabPage1);
 			this->tabControl1->Controls->Add(this->tabPage2);
+			this->tabControl1->Controls->Add(this->tabPage3);
 			this->tabControl1->Location = System::Drawing::Point(4, 41);
 			this->tabControl1->Name = L"tabControl1";
 			this->tabControl1->SelectedIndex = 0;
@@ -2337,6 +2347,41 @@ private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel27;
 			this->tableLayoutPanel25->Size = System::Drawing::Size(301, 243);
 			this->tableLayoutPanel25->TabIndex = 157;
 			// 
+			// tableLayoutPanel27
+			// 
+			this->tableLayoutPanel27->AutoSize = true;
+			this->tableLayoutPanel27->ColumnCount = 2;
+			this->tableLayoutPanel27->ColumnStyles->Add((gcnew System::Windows::Forms::ColumnStyle()));
+			this->tableLayoutPanel27->ColumnStyles->Add((gcnew System::Windows::Forms::ColumnStyle()));
+			this->tableLayoutPanel27->Controls->Add(this->button2, 1, 0);
+			this->tableLayoutPanel27->Controls->Add(this->button12, 0, 0);
+			this->tableLayoutPanel27->Location = System::Drawing::Point(4, 4);
+			this->tableLayoutPanel27->Name = L"tableLayoutPanel27";
+			this->tableLayoutPanel27->RowCount = 1;
+			this->tableLayoutPanel27->RowStyles->Add((gcnew System::Windows::Forms::RowStyle()));
+			this->tableLayoutPanel27->Size = System::Drawing::Size(162, 29);
+			this->tableLayoutPanel27->TabIndex = 159;
+			// 
+			// button2
+			// 
+			this->button2->Location = System::Drawing::Point(84, 3);
+			this->button2->Name = L"button2";
+			this->button2->Size = System::Drawing::Size(75, 23);
+			this->button2->TabIndex = 158;
+			this->button2->Text = L"Demo";
+			this->button2->UseVisualStyleBackColor = true;
+			this->button2->Click += gcnew System::EventHandler(this, &MyForm::button2_Click);
+			// 
+			// button12
+			// 
+			this->button12->Location = System::Drawing::Point(3, 3);
+			this->button12->Name = L"button12";
+			this->button12->Size = System::Drawing::Size(75, 23);
+			this->button12->TabIndex = 12;
+			this->button12->Text = L"Activate";
+			this->button12->UseVisualStyleBackColor = true;
+			this->button12->Click += gcnew System::EventHandler(this, &MyForm::button12_Click);
+			// 
 			// tableLayoutPanel16
 			// 
 			this->tableLayoutPanel16->AutoSize = true;
@@ -2567,16 +2612,6 @@ private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel27;
 			this->textBox38->TabIndex = 39;
 			this->textBox38->Text = L"20";
 			// 
-			// button12
-			// 
-			this->button12->Location = System::Drawing::Point(3, 3);
-			this->button12->Name = L"button12";
-			this->button12->Size = System::Drawing::Size(75, 23);
-			this->button12->TabIndex = 12;
-			this->button12->Text = L"Activate";
-			this->button12->UseVisualStyleBackColor = true;
-			this->button12->Click += gcnew System::EventHandler(this, &MyForm::button12_Click);
-			// 
 			// tableLayoutPanel12
 			// 
 			this->tableLayoutPanel12->AutoSize = true;
@@ -2729,6 +2764,39 @@ private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel27;
 			this->checkBox5->TabIndex = 157;
 			this->checkBox5->Text = L"auto";
 			this->checkBox5->UseVisualStyleBackColor = true;
+			// 
+			// tabPage3
+			// 
+			this->tabPage3->Controls->Add(this->button3);
+			this->tabPage3->Controls->Add(this->treeView1);
+			this->tabPage3->Location = System::Drawing::Point(4, 22);
+			this->tabPage3->Name = L"tabPage3";
+			this->tabPage3->Padding = System::Windows::Forms::Padding(3);
+			this->tabPage3->Size = System::Drawing::Size(859, 258);
+			this->tabPage3->TabIndex = 2;
+			this->tabPage3->Text = L"USB Descriptors";
+			this->tabPage3->UseVisualStyleBackColor = true;
+			// 
+			// button3
+			// 
+			this->button3->Location = System::Drawing::Point(6, 6);
+			this->button3->Name = L"button3";
+			this->button3->Size = System::Drawing::Size(108, 23);
+			this->button3->TabIndex = 1;
+			this->button3->Text = L"Read descriptors";
+			this->button3->UseVisualStyleBackColor = true;
+			this->button3->Click += gcnew System::EventHandler(this, &MyForm::button3_Click);
+			// 
+			// treeView1
+			// 
+			this->treeView1->Location = System::Drawing::Point(131, 6);
+			this->treeView1->Name = L"treeView1";
+			treeNode1->Name = L"Knoten0";
+			treeNode1->Text = L"Press \"Read descriptors\" to read available descriptors of all connected USB devic"
+				L"es";
+			this->treeView1->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(1) { treeNode1 });
+			this->treeView1->Size = System::Drawing::Size(702, 246);
+			this->treeView1->TabIndex = 0;
 			// 
 			// label82
 			// 
@@ -2891,31 +2959,6 @@ private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel27;
 			this->tableLayoutPanel23->Size = System::Drawing::Size(232, 89);
 			this->tableLayoutPanel23->TabIndex = 158;
 			// 
-			// button2
-			// 
-			this->button2->Location = System::Drawing::Point(84, 3);
-			this->button2->Name = L"button2";
-			this->button2->Size = System::Drawing::Size(75, 23);
-			this->button2->TabIndex = 158;
-			this->button2->Text = L"Demo";
-			this->button2->UseVisualStyleBackColor = true;
-			this->button2->Click += gcnew System::EventHandler(this, &MyForm::button2_Click);
-			// 
-			// tableLayoutPanel27
-			// 
-			this->tableLayoutPanel27->AutoSize = true;
-			this->tableLayoutPanel27->ColumnCount = 2;
-			this->tableLayoutPanel27->ColumnStyles->Add((gcnew System::Windows::Forms::ColumnStyle()));
-			this->tableLayoutPanel27->ColumnStyles->Add((gcnew System::Windows::Forms::ColumnStyle()));
-			this->tableLayoutPanel27->Controls->Add(this->button2, 1, 0);
-			this->tableLayoutPanel27->Controls->Add(this->button12, 0, 0);
-			this->tableLayoutPanel27->Location = System::Drawing::Point(4, 4);
-			this->tableLayoutPanel27->Name = L"tableLayoutPanel27";
-			this->tableLayoutPanel27->RowCount = 1;
-			this->tableLayoutPanel27->RowStyles->Add((gcnew System::Windows::Forms::RowStyle()));
-			this->tableLayoutPanel27->Size = System::Drawing::Size(162, 29);
-			this->tableLayoutPanel27->TabIndex = 159;
-			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -2968,6 +3011,7 @@ private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel27;
 			this->tabPage2->PerformLayout();
 			this->tableLayoutPanel25->ResumeLayout(false);
 			this->tableLayoutPanel25->PerformLayout();
+			this->tableLayoutPanel27->ResumeLayout(false);
 			this->tableLayoutPanel16->ResumeLayout(false);
 			this->tableLayoutPanel16->PerformLayout();
 			this->tableLayoutPanel14->ResumeLayout(false);
@@ -2976,6 +3020,7 @@ private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel27;
 			this->tableLayoutPanel13->PerformLayout();
 			this->tableLayoutPanel12->ResumeLayout(false);
 			this->tableLayoutPanel12->PerformLayout();
+			this->tabPage3->ResumeLayout(false);
 			this->tableLayoutPanel15->ResumeLayout(false);
 			this->tableLayoutPanel15->PerformLayout();
 			this->tableLayoutPanel10->ResumeLayout(false);
@@ -2986,7 +3031,6 @@ private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel27;
 			this->tableLayoutPanel24->PerformLayout();
 			this->tableLayoutPanel23->ResumeLayout(false);
 			this->tableLayoutPanel23->PerformLayout();
-			this->tableLayoutPanel27->ResumeLayout(false);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -3021,5 +3065,6 @@ private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel27;
 	private: System::Void button16_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e);
+	private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e);
 	};
 }

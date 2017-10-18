@@ -10,7 +10,10 @@ libusb_device** usbdevices;
 PortalConnection* connection = new PortalConnection;
 
 System::Void MyForm::MyForm_Load(System::Object^  sender, System::EventArgs^  e) {
-	libusb_init(&usbcontext);
+	libusb_error ret = (libusb_error)libusb_init(&usbcontext);
+	if (ret != LIBUSB_SUCCESS) {
+		textBox33->AppendText("libusb init failed\r\n");
+	}
 	colorPlatformComboBox->SelectedIndex = 0;
 	comboBox2->SelectedIndex = 0;
 	textBox33->AppendText("Scan for devices, then choose one device to connect. Activation needed once after connected to a USB port.");
@@ -32,7 +35,7 @@ public:
 System::Void UIProject::MyForm::ScanDevicesButton_Click(System::Object ^ sender, System::EventArgs ^ e)
 {
 	comboBox1->Items->Clear();
-
+	libusb_free_device_list(usbdevices, 1);
 	int devicesCount = libusb_get_device_list(usbcontext, &usbdevices);
 	libusb_device_descriptor descriptor;
 
@@ -654,4 +657,155 @@ System::Void UIProject::MyForm::button2_Click(System::Object ^ sender, System::E
 	textBox38->Text = String::Concat("40");//fadeLen
 	textBox37->Text = String::Concat("255");//numPulses
 	button14->PerformClick();//fade
+}
+
+System::Void UIProject::MyForm::button3_Click(System::Object ^ sender, System::EventArgs ^ e)
+{
+	treeView1->Nodes->Clear();
+	treeView1->BeginUpdate();
+	/*treeView1->Nodes->Add("22");
+	treeView1->Nodes[0]->Nodes->Add("d");
+	treeView1->Nodes->Add("Device " + 5)->Nodes->Add("Read descriptor error");*/
+
+
+	libusb_error ret;
+	libusb_device **devs;
+	libusb_device_descriptor descriptor;
+	int devicesCount = libusb_get_device_list(usbcontext, &devs);
+	if (devicesCount < 0) {
+		textBox33->AppendText("\r\nlibusb get device list failed");
+		return;
+	}
+	for (int i = 0; i < devicesCount; i++) {
+		ret = (libusb_error)libusb_get_device_descriptor(devs[i], &descriptor);
+		if (ret != LIBUSB_SUCCESS) {
+			textBox33->AppendText("\r\nRead Device " + i + " descriptor failed");
+			treeView1->Nodes->Add("Device " + i)->Nodes->Add("Read descriptor error");
+			continue;
+		}
+		if (descriptor.idVendor == 0x0e6f && descriptor.idProduct == 0x241)
+			treeView1->Nodes->Add("Device " + i + " venID:" + descriptor.idVendor.ToString("X") + " prodID:" + descriptor.idProduct.ToString("X") + " LegoDimensionsPortal");
+		else if (descriptor.idVendor == 0x0e6f && descriptor.idProduct == 0x129)
+			treeView1->Nodes->Add("Device " + i + " venID:" + descriptor.idVendor.ToString("X") + " prodID:" + descriptor.idProduct.ToString("X") + " DisneyInfinityBase");
+		else if (descriptor.idVendor == 0x1430 && descriptor.idProduct == 0x150)
+			treeView1->Nodes->Add("Device " + i + " venID:" + descriptor.idVendor.ToString("X") + " prodID:" + descriptor.idProduct.ToString("X") + " SkylandersPortal");
+		else treeView1->Nodes->Add("Device " + i + " venID:" + descriptor.idVendor.ToString("X") + " prodID:" + descriptor.idProduct.ToString("X"));
+		treeView1->Nodes[i]->Nodes->Add("Descriptor length: " + descriptor.bLength);
+		switch (descriptor.bDescriptorType) {
+		case LIBUSB_DT_DEVICE: treeView1->Nodes[i]->Nodes->Add("Device type: LIBUSB_DT_DEVICE"); break;
+		case LIBUSB_DT_CONFIG: treeView1->Nodes[i]->Nodes->Add("Device type: LIBUSB_DT_CONFIG"); break;
+		case LIBUSB_DT_STRING: treeView1->Nodes[i]->Nodes->Add("Device type: LIBUSB_DT_STRING"); break;
+		case LIBUSB_DT_INTERFACE: treeView1->Nodes[i]->Nodes->Add("Device type: LIBUSB_DT_INTERFACE"); break;
+		case LIBUSB_DT_ENDPOINT: treeView1->Nodes[i]->Nodes->Add("Device type: LIBUSB_DT_ENDPOINT"); break;
+		case LIBUSB_DT_BOS: treeView1->Nodes[i]->Nodes->Add("Device type: LIBUSB_DT_BOS"); break;
+		case LIBUSB_DT_DEVICE_CAPABILITY: treeView1->Nodes[i]->Nodes->Add("Device type: LIBUSB_DT_DEVICE_CAPABILITY"); break;
+		case LIBUSB_DT_HID: treeView1->Nodes[i]->Nodes->Add("Device type: LIBUSB_DT_HID"); break;
+		case LIBUSB_DT_REPORT: treeView1->Nodes[i]->Nodes->Add("Device type: LIBUSB_DT_REPORT"); break;
+		case LIBUSB_DT_PHYSICAL: treeView1->Nodes[i]->Nodes->Add("Device type: LIBUSB_DT_PHYSICAL"); break;
+		case LIBUSB_DT_HUB: treeView1->Nodes[i]->Nodes->Add("Device type: LIBUSB_DT_HUB"); break;
+		case LIBUSB_DT_SUPERSPEED_HUB: treeView1->Nodes[i]->Nodes->Add("Device type: LIBUSB_DT_SUPERSPEED_HUB"); break;
+		case LIBUSB_DT_SS_ENDPOINT_COMPANION: treeView1->Nodes[i]->Nodes->Add("Device type: LIBUSB_DT_SS_ENDPOINT_COMPANION"); break;
+		default: treeView1->Nodes[i]->Nodes->Add("Device type: unknown Device type"); break;
+		}
+		treeView1->Nodes[i]->Nodes->Add("USB spec: " + (descriptor.bcdUSB >> 8) + "." + ((descriptor.bcdUSB >> 4) & 0xf));
+		switch (descriptor.bDeviceClass) {
+		case LIBUSB_CLASS_PER_INTERFACE: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_PER_INTERFACE"); break;
+		case LIBUSB_CLASS_AUDIO: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_AUDIO"); break;
+		case LIBUSB_CLASS_COMM: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_COMM"); break;
+		case LIBUSB_CLASS_HID: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_HID \n"); break;
+		case LIBUSB_CLASS_PHYSICAL: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_PER_INTERFACE"); break;
+		case LIBUSB_CLASS_PRINTER: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_PRINTER"); break;
+		case LIBUSB_CLASS_IMAGE: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_IMAGE"); break;
+		case LIBUSB_CLASS_MASS_STORAGE: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_MASS_STORAGE"); break;
+		case LIBUSB_CLASS_HUB: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_HUB"); break;
+		case LIBUSB_CLASS_DATA: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_DATA"); break;
+		case LIBUSB_CLASS_SMART_CARD: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_SMART_CARD"); break;
+		case LIBUSB_CLASS_CONTENT_SECURITY: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_CONTENT_SECURITY"); break;
+		case LIBUSB_CLASS_VIDEO: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_VIDEO"); break;
+		case LIBUSB_CLASS_PERSONAL_HEALTHCARE: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_PERSONAL_HEALTHCARE"); break;
+		case LIBUSB_CLASS_DIAGNOSTIC_DEVICE: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_DIAGNOSTIC_DEVICE"); break;
+		case LIBUSB_CLASS_WIRELESS: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_WIRELESS"); break;
+		case LIBUSB_CLASS_APPLICATION: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_APPLICATION"); break;
+		case LIBUSB_CLASS_VENDOR_SPEC: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_VENDOR_SPEC"); break;
+		default: treeView1->Nodes[i]->Nodes->Add("Device class: unknown device class");
+		}
+		treeView1->Nodes[i]->Nodes->Add("Device subclass: " + descriptor.bDeviceSubClass);
+		treeView1->Nodes[i]->Nodes->Add("Device protocol: " + descriptor.bDeviceProtocol);
+		treeView1->Nodes[i]->Nodes->Add("MaxPacketSize Endpoint0 : " + descriptor.bMaxPacketSize0);
+		treeView1->Nodes[i]->Nodes->Add("VendorID: " + descriptor.idVendor.ToString("X"));
+		treeView1->Nodes[i]->Nodes->Add("ProductID: " + descriptor.idProduct.ToString("X"));
+		treeView1->Nodes[i]->Nodes->Add("Device release num: " + ((descriptor.bcdDevice >> 12) & 0xf) + "." +
+			((descriptor.bcdDevice >> 12) & 0xf) + "." + ((descriptor.bcdDevice >> 4) & 0xf) + "." + (descriptor.bcdDevice & 0xf));
+		treeView1->Nodes[i]->Nodes->Add("Number of possible configurations: " + descriptor.bNumConfigurations);
+
+		libusb_device_handle* handle;
+		ret = (libusb_error)libusb_open(devs[i], &handle);
+		if (ret != LIBUSB_SUCCESS) {
+			String^ errorName = gcnew String(libusb_error_name(ret));
+			String^ errorText = gcnew String(libusb_strerror(ret));
+			textBox33->AppendText("\r\nlibusb open device failed: " + errorName + " " + errorText);
+			treeView1->Nodes[i]->Nodes->Add("Manufacturer: Open device error");
+			treeView1->Nodes[i]->Nodes->Add("Product: Open device error");
+			treeView1->Nodes[i]->Nodes->Add("SerialNum: Open device error");
+		}
+		else {
+			//Manufacturer string
+			unsigned char data[256];
+			if (descriptor.iManufacturer != 0) {
+				for (int i = 0; i < 256; ++i)data[i] = 0;
+				ret = (libusb_error)libusb_get_string_descriptor_ascii(handle, descriptor.iManufacturer, &data[0], 256);
+				if (ret > 0) {
+					String^ manufacturerText = gcnew String((char*)data);
+					treeView1->Nodes[i]->Nodes->Add("Manufacturer: " + manufacturerText);
+				}
+				else {
+					String^ errorName = gcnew String(libusb_error_name(ret));
+					String^ errorText = gcnew String(libusb_strerror(ret));
+					textBox33->AppendText("\r\nlibusb read manufacturer text failed: " + errorName + " " + errorText);
+					treeView1->Nodes[i]->Nodes->Add("Manufacturer: Read text error");
+				}
+			}
+			else
+				treeView1->Nodes[i]->Nodes->Add("Manufacturer: no information");
+			//Product string
+			if (descriptor.iProduct != 0) {
+				for (int i = 0; i < 256; ++i)data[i] = 0;
+				ret = (libusb_error)libusb_get_string_descriptor_ascii(handle, descriptor.iProduct, &data[0], 256);
+				if (ret > 0) {
+					String^ productText = gcnew String((char*)data);
+					treeView1->Nodes[i]->Nodes->Add("Product: " + productText);
+				}
+				else {
+					String^ errorName = gcnew String(libusb_error_name(ret));
+					String^ errorText = gcnew String(libusb_strerror(ret));
+					textBox33->AppendText("\r\nlibusb read product text failed: " + errorName + " " + errorText);
+					treeView1->Nodes[i]->Nodes->Add("Product: Read text error");
+				}
+			}
+			else
+				treeView1->Nodes[i]->Nodes->Add("Product: no information");
+			//Serialnumber string
+			if (descriptor.iSerialNumber != 0) {
+				for (int i = 0; i < 256; ++i)data[i] = 0;
+				ret = (libusb_error)libusb_get_string_descriptor_ascii(handle, descriptor.iSerialNumber, &data[0], 256);
+				if (ret > 0) {
+					String^ serialnumberText = gcnew String((char*)data);
+					treeView1->Nodes[i]->Nodes->Add("Serialnumber: " + serialnumberText);
+				}
+				else {
+					String^ errorName = gcnew String(libusb_error_name(ret));
+					String^ errorText = gcnew String(libusb_strerror(ret));
+					textBox33->AppendText("\r\nlibusb read product text failed: " + errorName + " " + errorText);
+					treeView1->Nodes[i]->Nodes->Add("Serialnumber: Read text error");
+				}
+			}
+			else
+				treeView1->Nodes[i]->Nodes->Add("Serialnumber: no information");
+
+
+			libusb_close(handle);
+		}
+	}
+	treeView1->EndUpdate();
+	libusb_free_device_list(devs, 1);
 }
