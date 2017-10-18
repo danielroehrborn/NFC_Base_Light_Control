@@ -683,14 +683,15 @@ System::Void UIProject::MyForm::button3_Click(System::Object ^ sender, System::E
 			treeView1->Nodes->Add("Device " + i)->Nodes->Add("Read descriptor error");
 			continue;
 		}
+		System::Windows::Forms::TreeNode^ curDevice;
 		if (descriptor.idVendor == 0x0e6f && descriptor.idProduct == 0x241)
-			treeView1->Nodes->Add("Device " + i + " venID:" + descriptor.idVendor.ToString("X") + " prodID:" + descriptor.idProduct.ToString("X") + " LegoDimensionsPortal");
+			curDevice = treeView1->Nodes->Add("Device " + i + " venID:" + descriptor.idVendor.ToString("X") + " prodID:" + descriptor.idProduct.ToString("X") + " LegoDimensionsPortal");
 		else if (descriptor.idVendor == 0x0e6f && descriptor.idProduct == 0x129)
-			treeView1->Nodes->Add("Device " + i + " venID:" + descriptor.idVendor.ToString("X") + " prodID:" + descriptor.idProduct.ToString("X") + " DisneyInfinityBase");
+			curDevice = treeView1->Nodes->Add("Device " + i + " venID:" + descriptor.idVendor.ToString("X") + " prodID:" + descriptor.idProduct.ToString("X") + " DisneyInfinityBase");
 		else if (descriptor.idVendor == 0x1430 && descriptor.idProduct == 0x150)
-			treeView1->Nodes->Add("Device " + i + " venID:" + descriptor.idVendor.ToString("X") + " prodID:" + descriptor.idProduct.ToString("X") + " SkylandersPortal");
-		else treeView1->Nodes->Add("Device " + i + " venID:" + descriptor.idVendor.ToString("X") + " prodID:" + descriptor.idProduct.ToString("X"));
-		treeView1->Nodes[i]->Nodes->Add("Descriptor length: " + descriptor.bLength);
+			curDevice = treeView1->Nodes->Add("Device " + i + " venID:" + descriptor.idVendor.ToString("X") + " prodID:" + descriptor.idProduct.ToString("X") + " SkylandersPortal");
+		else curDevice = treeView1->Nodes->Add("Device " + i + " venID:" + descriptor.idVendor.ToString("X") + " prodID:" + descriptor.idProduct.ToString("X"));
+		curDevice->Nodes->Add("Descriptor length: " + descriptor.bLength);
 		switch (descriptor.bDescriptorType) {
 		case LIBUSB_DT_DEVICE: treeView1->Nodes[i]->Nodes->Add("Descriptor type: LIBUSB_DT_DEVICE"); break;
 		case LIBUSB_DT_CONFIG: treeView1->Nodes[i]->Nodes->Add("Descriptor type: LIBUSB_DT_CONFIG"); break;
@@ -707,7 +708,7 @@ System::Void UIProject::MyForm::button3_Click(System::Object ^ sender, System::E
 		case LIBUSB_DT_SS_ENDPOINT_COMPANION: treeView1->Nodes[i]->Nodes->Add("Descriptor type: LIBUSB_DT_SS_ENDPOINT_COMPANION"); break;
 		default: treeView1->Nodes[i]->Nodes->Add("Descriptor type: unknown Descriptor type"); break;
 		}
-		treeView1->Nodes[i]->Nodes->Add("USB spec: " + (descriptor.bcdUSB >> 8) + "." + ((descriptor.bcdUSB >> 4) & 0xf));
+		curDevice->Nodes->Add("USB spec: " + (descriptor.bcdUSB >> 8) + "." + ((descriptor.bcdUSB >> 4) & 0xf));
 		switch (descriptor.bDeviceClass) {
 		case LIBUSB_CLASS_PER_INTERFACE: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_PER_INTERFACE"); break;
 		case LIBUSB_CLASS_AUDIO: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_AUDIO"); break;
@@ -729,21 +730,20 @@ System::Void UIProject::MyForm::button3_Click(System::Object ^ sender, System::E
 		case LIBUSB_CLASS_VENDOR_SPEC: treeView1->Nodes[i]->Nodes->Add("Device class: LIBUSB_CLASS_VENDOR_SPEC"); break;
 		default: treeView1->Nodes[i]->Nodes->Add("Device class: unknown device class");
 		}
-		treeView1->Nodes[i]->Nodes->Add("Device subclass: " + descriptor.bDeviceSubClass);
-		treeView1->Nodes[i]->Nodes->Add("Device protocol: " + descriptor.bDeviceProtocol);
-		treeView1->Nodes[i]->Nodes->Add("MaxPacketSize Endpoint0 : " + descriptor.bMaxPacketSize0);
-		treeView1->Nodes[i]->Nodes->Add("VendorID: " + descriptor.idVendor.ToString("X"));
-		treeView1->Nodes[i]->Nodes->Add("ProductID: " + descriptor.idProduct.ToString("X"));
-		treeView1->Nodes[i]->Nodes->Add("Device release num: " + ((descriptor.bcdDevice >> 12) & 0xf) + "." +
+		curDevice->Nodes->Add("Device subclass: " + descriptor.bDeviceSubClass);
+		curDevice->Nodes->Add("Device protocol: " + descriptor.bDeviceProtocol);
+		curDevice->Nodes->Add("MaxPacketSize Endpoint0 : " + descriptor.bMaxPacketSize0);
+		curDevice->Nodes->Add("VendorID: " + descriptor.idVendor.ToString("X"));
+		curDevice->Nodes->Add("ProductID: " + descriptor.idProduct.ToString("X"));
+		curDevice->Nodes->Add("Device release num: " + ((descriptor.bcdDevice >> 12) & 0xf) + "." +
 			((descriptor.bcdDevice >> 12) & 0xf) + "." + ((descriptor.bcdDevice >> 4) & 0xf) + "." + (descriptor.bcdDevice & 0xf));
-		treeView1->Nodes[i]->Nodes->Add("Number of possible configurations: " + descriptor.bNumConfigurations);
-
+		curDevice->Nodes->Add("Number of possible configurations: " + descriptor.bNumConfigurations);
 		libusb_device_handle* handle;
 		ret = (libusb_error)libusb_open(devs[i], &handle);
 		if (ret != LIBUSB_SUCCESS) {
 			String^ errorName = gcnew String(libusb_error_name(ret));
 			String^ errorText = gcnew String(libusb_strerror(ret));
-			textBox33->AppendText("\r\nlibusb open device failed: " + errorName + " " + errorText);
+			//textBox33->AppendText("\r\nlibusb open device failed: " + errorName + " " + errorText);
 			treeView1->Nodes[i]->Nodes->Add("Manufacturer: Open device error");
 			treeView1->Nodes[i]->Nodes->Add("Product: Open device error");
 			treeView1->Nodes[i]->Nodes->Add("SerialNum: Open device error");
@@ -761,7 +761,7 @@ System::Void UIProject::MyForm::button3_Click(System::Object ^ sender, System::E
 				else {
 					String^ errorName = gcnew String(libusb_error_name(ret));
 					String^ errorText = gcnew String(libusb_strerror(ret));
-					textBox33->AppendText("\r\nlibusb read manufacturer text failed: " + errorName + " " + errorText);
+					//textBox33->AppendText("\r\nlibusb read manufacturer text failed: " + errorName + " " + errorText);
 					treeView1->Nodes[i]->Nodes->Add("Manufacturer: Read text error");
 				}
 			}
@@ -810,37 +810,37 @@ System::Void UIProject::MyForm::button3_Click(System::Object ^ sender, System::E
 			if (ret != LIBUSB_SUCCESS) {
 				String^ errorName = gcnew String(libusb_error_name(ret));
 				String^ errorText = gcnew String(libusb_strerror(ret));
-				textBox33->AppendText("\r\nlibusb get config descriptor failed: " + errorName + " " + errorText);
+				//textBox33->AppendText("\r\nlibusb get config descriptor failed: " + errorName + " " + errorText);
 				treeView1->Nodes[i]->Nodes->Add("Configuration " + l)->Nodes->Add("Read error");
 			}
 			else {
-				treeView1->Nodes[i]->Nodes->Add("Configuration " + l);
-				treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Descriptor length: " + config->bLength);
+				System::Windows::Forms::TreeNode^ curConfig = curDevice->Nodes->Add("Configuration " + l);
+				curConfig->Nodes->Add("Descriptor length: " + config->bLength);
 				switch (config->bDescriptorType) {
-				case LIBUSB_DT_DEVICE: treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Descriptor type: LIBUSB_DT_DEVICE"); break;
-				case LIBUSB_DT_CONFIG: treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Descriptor type: LIBUSB_DT_CONFIG"); break;
-				case LIBUSB_DT_STRING: treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Descriptor type: LIBUSB_DT_STRING"); break;
-				case LIBUSB_DT_INTERFACE: treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Descriptor type: LIBUSB_DT_INTERFACE"); break;
-				case LIBUSB_DT_ENDPOINT: treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Descriptor type: LIBUSB_DT_ENDPOINT"); break;
-				case LIBUSB_DT_BOS: treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Descriptor type: LIBUSB_DT_BOS"); break;
-				case LIBUSB_DT_DEVICE_CAPABILITY: treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Descriptor type: LIBUSB_DT_DEVICE_CAPABILITY"); break;
-				case LIBUSB_DT_HID: treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Descriptor type: LIBUSB_DT_HID"); break;
-				case LIBUSB_DT_REPORT: treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Descriptor type: LIBUSB_DT_REPORT"); break;
-				case LIBUSB_DT_PHYSICAL: treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Descriptor type: LIBUSB_DT_PHYSICAL"); break;
-				case LIBUSB_DT_HUB: treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Descriptor type: LIBUSB_DT_HUB"); break;
-				case LIBUSB_DT_SUPERSPEED_HUB: treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Descriptor type: LIBUSB_DT_SUPERSPEED_HUB"); break;
-				case LIBUSB_DT_SS_ENDPOINT_COMPANION: treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Descriptor type: LIBUSB_DT_SS_ENDPOINT_COMPANION"); break;
-				default: treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Descriptor type: unknown Descriptor type"); break;
+				case LIBUSB_DT_DEVICE: curConfig->Nodes->Add("Descriptor type: LIBUSB_DT_DEVICE"); break;
+				case LIBUSB_DT_CONFIG: curConfig->Nodes->Add("Descriptor type: LIBUSB_DT_CONFIG"); break;
+				case LIBUSB_DT_STRING: curConfig->Nodes->Add("Descriptor type: LIBUSB_DT_STRING"); break;
+				case LIBUSB_DT_INTERFACE: curConfig->Nodes->Add("Descriptor type: LIBUSB_DT_INTERFACE"); break;
+				case LIBUSB_DT_ENDPOINT: curConfig->Nodes->Add("Descriptor type: LIBUSB_DT_ENDPOINT"); break;
+				case LIBUSB_DT_BOS: curConfig->Nodes->Add("Descriptor type: LIBUSB_DT_BOS"); break;
+				case LIBUSB_DT_DEVICE_CAPABILITY: curConfig->Nodes->Add("Descriptor type: LIBUSB_DT_DEVICE_CAPABILITY"); break;
+				case LIBUSB_DT_HID: curConfig->Nodes->Add("Descriptor type: LIBUSB_DT_HID"); break;
+				case LIBUSB_DT_REPORT: curConfig->Nodes->Add("Descriptor type: LIBUSB_DT_REPORT"); break;
+				case LIBUSB_DT_PHYSICAL: curConfig->Nodes->Add("Descriptor type: LIBUSB_DT_PHYSICAL"); break;
+				case LIBUSB_DT_HUB: curConfig->Nodes->Add("Descriptor type: LIBUSB_DT_HUB"); break;
+				case LIBUSB_DT_SUPERSPEED_HUB: curConfig->Nodes->Add("Descriptor type: LIBUSB_DT_SUPERSPEED_HUB"); break;
+				case LIBUSB_DT_SS_ENDPOINT_COMPANION: curConfig->Nodes->Add("Descriptor type: LIBUSB_DT_SS_ENDPOINT_COMPANION"); break;
+				default: curConfig->Nodes->Add("Descriptor type: unknown Descriptor type"); break;
 				}
-				treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Total length: " + config->wTotalLength);
-				treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Configuration identifier: " + config->bConfigurationValue);
+				curConfig->Nodes->Add("Total length: " + config->wTotalLength);
+				curConfig->Nodes->Add("Configuration identifier: " + config->bConfigurationValue);
 				libusb_device_handle* handle;
 				ret = (libusb_error)libusb_open(devs[i], &handle);
 				if (ret != LIBUSB_SUCCESS) {
 					String^ errorName = gcnew String(libusb_error_name(ret));
 					String^ errorText = gcnew String(libusb_strerror(ret));
-					textBox33->AppendText("\r\nlibusb open device failed: " + errorName + " " + errorText);
-					treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Configuration string descriptor: Open device error");
+					//textBox33->AppendText("\r\nlibusb open device failed: " + errorName + " " + errorText);
+					curConfig->Nodes->Add("Configuration string descriptor: Open device error");
 				}
 				else {
 					//Configuration string
@@ -850,80 +850,80 @@ System::Void UIProject::MyForm::button3_Click(System::Object ^ sender, System::E
 						ret = (libusb_error)libusb_get_string_descriptor_ascii(handle, config->iConfiguration, &data[0], 256);
 						if (ret > 0) {
 							String^ configurationText = gcnew String((char*)data);
-							treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Configuration: " + configurationText);
+							curConfig->Nodes->Add("Configuration: " + configurationText);
 						}
 						else {
 							String^ errorName = gcnew String(libusb_error_name(ret));
 							String^ errorText = gcnew String(libusb_strerror(ret));
-							textBox33->AppendText("\r\nlibusb read configuration text failed: " + errorName + " " + errorText);
-							treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Configuration: Read text error");
+							//textBox33->AppendText("\r\nlibusb read configuration text failed: " + errorName + " " + errorText);
+							curConfig->Nodes->Add("Configuration: Read text error");
 						}
 					}
 					else
-						treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Configuration: no information");
+						curConfig->Nodes->Add("Configuration: no information");
 					libusb_close(handle);
 				}
-				treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Configuration characteristics: " + config->bmAttributes);
-				treeView1->Nodes[i]->Nodes[l]->Nodes->Add("PowerConsumption: " + config->MaxPower + " -> HighSpeed:" + (config->MaxPower * 2) +
+				curConfig->Nodes->Add("Configuration characteristics: " + config->bmAttributes);
+				curConfig->Nodes->Add("PowerConsumption: " + config->MaxPower + " -> HighSpeed:" + (config->MaxPower * 2) +
 					"mA, SuperSpeed:" + (config->MaxPower * 8) + "mA");
 				if (config->extra_length > 0)treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Detected extra descriptors length: " + config->extra_length);
-				treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Num interfaces: " + config->bNumInterfaces);
+				curConfig->Nodes->Add("Num interfaces: " + config->bNumInterfaces);
 				//Iterate interfaces
 				for (int k = 0; k < (int)config->bNumInterfaces; ++k) {
-					treeView1->Nodes[i]->Nodes[l]->Nodes->Add("Interface " + k);
-					treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes->Add("Num alternate settings: " + config->interface[k].num_altsetting);
+					System::Windows::Forms::TreeNode^ curInterface = curConfig->Nodes->Add("Interface " + k);
+					curInterface->Nodes->Add("Num alternate settings: " + config->interface[k].num_altsetting);
 					//Iterate settings
-					for (int j = 0; j < config->interface[i].num_altsetting; ++j) {
-						treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes->Add("Setting " + j);
-						treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Descriptor length: " + config->interface[k].altsetting[j].bLength);
+					for (int j = 0; j < config->interface[k].num_altsetting; ++j) {
+						System::Windows::Forms::TreeNode^ curSetting = curInterface->Nodes->Add("Setting " + j);
+						curSetting->Nodes->Add("Descriptor length: " + config->interface[k].altsetting[j].bLength);
 						switch ((libusb_descriptor_type)config->interface[k].altsetting[j].bDescriptorType) {
-						case LIBUSB_DT_DEVICE: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Descriptor type: LIBUSB_DT_DEVICE"); break;
-						case LIBUSB_DT_CONFIG: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Descriptor type: LIBUSB_DT_CONFIG"); break;
-						case LIBUSB_DT_STRING: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Descriptor type: LIBUSB_DT_STRING"); break;
-						case LIBUSB_DT_INTERFACE: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Descriptor type: LIBUSB_DT_INTERFACE"); break;
-						case LIBUSB_DT_ENDPOINT: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Descriptor type: LIBUSB_DT_ENDPOINT"); break;
-						case LIBUSB_DT_BOS: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Descriptor type: LIBUSB_DT_BOS"); break;
-						case LIBUSB_DT_DEVICE_CAPABILITY: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Descriptor type: LIBUSB_DT_DEVICE_CAPABILITY"); break;
-						case LIBUSB_DT_HID: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Descriptor type: LIBUSB_DT_HID"); break;
-						case LIBUSB_DT_REPORT: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Descriptor type: LIBUSB_DT_REPORT"); break;
-						case LIBUSB_DT_PHYSICAL: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Descriptor type: LIBUSB_DT_PHYSICAL"); break;
-						case LIBUSB_DT_HUB: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Descriptor type: LIBUSB_DT_HUB"); break;
-						case LIBUSB_DT_SUPERSPEED_HUB: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Descriptor type: LIBUSB_DT_SUPERSPEED_HUB"); break;
-						case LIBUSB_DT_SS_ENDPOINT_COMPANION: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Descriptor type: LIBUSB_DT_SS_ENDPOINT_COMPANION"); break;
-						default: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Descriptor type: unknown Descriptor type"); break;
+						case LIBUSB_DT_DEVICE: curSetting->Nodes->Add("Descriptor type: LIBUSB_DT_DEVICE"); break;
+						case LIBUSB_DT_CONFIG: curSetting->Nodes->Add("Descriptor type: LIBUSB_DT_CONFIG"); break;
+						case LIBUSB_DT_STRING: curSetting->Nodes->Add("Descriptor type: LIBUSB_DT_STRING"); break;
+						case LIBUSB_DT_INTERFACE: curSetting->Nodes->Add("Descriptor type: LIBUSB_DT_INTERFACE"); break;
+						case LIBUSB_DT_ENDPOINT: curSetting->Nodes->Add("Descriptor type: LIBUSB_DT_ENDPOINT"); break;
+						case LIBUSB_DT_BOS: curSetting->Nodes->Add("Descriptor type: LIBUSB_DT_BOS"); break;
+						case LIBUSB_DT_DEVICE_CAPABILITY: curSetting->Nodes->Add("Descriptor type: LIBUSB_DT_DEVICE_CAPABILITY"); break;
+						case LIBUSB_DT_HID: curSetting->Nodes->Add("Descriptor type: LIBUSB_DT_HID"); break;
+						case LIBUSB_DT_REPORT: curSetting->Nodes->Add("Descriptor type: LIBUSB_DT_REPORT"); break;
+						case LIBUSB_DT_PHYSICAL: curSetting->Nodes->Add("Descriptor type: LIBUSB_DT_PHYSICAL"); break;
+						case LIBUSB_DT_HUB: curSetting->Nodes->Add("Descriptor type: LIBUSB_DT_HUB"); break;
+						case LIBUSB_DT_SUPERSPEED_HUB: curSetting->Nodes->Add("Descriptor type: LIBUSB_DT_SUPERSPEED_HUB"); break;
+						case LIBUSB_DT_SS_ENDPOINT_COMPANION: curSetting->Nodes->Add("Descriptor type: LIBUSB_DT_SS_ENDPOINT_COMPANION"); break;
+						default: curSetting->Nodes->Add("Descriptor type: unknown Descriptor type"); break;
 						}
-						treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Interface number: " + config->interface[k].altsetting[j].bInterfaceNumber);
-						treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Alternate setting value: " + config->interface[k].altsetting[j].bAlternateSetting);
+						curSetting->Nodes->Add("Interface number: " + config->interface[k].altsetting[j].bInterfaceNumber);
+						curSetting->Nodes->Add("Alternate setting value: " + config->interface[k].altsetting[j].bAlternateSetting);
 						switch ((libusb_class_code)config->interface[k].altsetting[j].bInterfaceClass) {
-						case LIBUSB_CLASS_PER_INTERFACE: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: LIBUSB_CLASS_PER_INTERFACE"); break;
-						case LIBUSB_CLASS_AUDIO: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: LIBUSB_CLASS_AUDIO"); break;
-						case LIBUSB_CLASS_COMM: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: LIBUSB_CLASS_COMM"); break;
-						case LIBUSB_CLASS_HID: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: LIBUSB_CLASS_HID \n"); break;
-						case LIBUSB_CLASS_PHYSICAL: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: LIBUSB_CLASS_PER_INTERFACE"); break;
-						case LIBUSB_CLASS_PRINTER: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: LIBUSB_CLASS_PRINTER"); break;
-						case LIBUSB_CLASS_IMAGE: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: LIBUSB_CLASS_IMAGE"); break;
-						case LIBUSB_CLASS_MASS_STORAGE: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: LIBUSB_CLASS_MASS_STORAGE"); break;
-						case LIBUSB_CLASS_HUB: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: LIBUSB_CLASS_HUB"); break;
-						case LIBUSB_CLASS_DATA: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: LIBUSB_CLASS_DATA"); break;
-						case LIBUSB_CLASS_SMART_CARD: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: LIBUSB_CLASS_SMART_CARD"); break;
-						case LIBUSB_CLASS_CONTENT_SECURITY: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: LIBUSB_CLASS_CONTENT_SECURITY"); break;
-						case LIBUSB_CLASS_VIDEO: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: LIBUSB_CLASS_VIDEO"); break;
-						case LIBUSB_CLASS_PERSONAL_HEALTHCARE: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: LIBUSB_CLASS_PERSONAL_HEALTHCARE"); break;
-						case LIBUSB_CLASS_DIAGNOSTIC_DEVICE: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: LIBUSB_CLASS_DIAGNOSTIC_DEVICE"); break;
-						case LIBUSB_CLASS_WIRELESS: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: LIBUSB_CLASS_WIRELESS"); break;
-						case LIBUSB_CLASS_APPLICATION: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: LIBUSB_CLASS_APPLICATION"); break;
-						case LIBUSB_CLASS_VENDOR_SPEC: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: LIBUSB_CLASS_VENDOR_SPEC"); break;
-						default: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Device class: unknown device class");
+						case LIBUSB_CLASS_PER_INTERFACE: curSetting->Nodes->Add("Device class: LIBUSB_CLASS_PER_INTERFACE"); break;
+						case LIBUSB_CLASS_AUDIO: curSetting->Nodes->Add("Device class: LIBUSB_CLASS_AUDIO"); break;
+						case LIBUSB_CLASS_COMM: curSetting->Nodes->Add("Device class: LIBUSB_CLASS_COMM"); break;
+						case LIBUSB_CLASS_HID: curSetting->Nodes->Add("Device class: LIBUSB_CLASS_HID \n"); break;
+						case LIBUSB_CLASS_PHYSICAL: curSetting->Nodes->Add("Device class: LIBUSB_CLASS_PER_INTERFACE"); break;
+						case LIBUSB_CLASS_PRINTER: curSetting->Nodes->Add("Device class: LIBUSB_CLASS_PRINTER"); break;
+						case LIBUSB_CLASS_IMAGE: curSetting->Nodes->Add("Device class: LIBUSB_CLASS_IMAGE"); break;
+						case LIBUSB_CLASS_MASS_STORAGE: curSetting->Nodes->Add("Device class: LIBUSB_CLASS_MASS_STORAGE"); break;
+						case LIBUSB_CLASS_HUB: curSetting->Nodes->Add("Device class: LIBUSB_CLASS_HUB"); break;
+						case LIBUSB_CLASS_DATA: curSetting->Nodes->Add("Device class: LIBUSB_CLASS_DATA"); break;
+						case LIBUSB_CLASS_SMART_CARD: curSetting->Nodes->Add("Device class: LIBUSB_CLASS_SMART_CARD"); break;
+						case LIBUSB_CLASS_CONTENT_SECURITY: curSetting->Nodes->Add("Device class: LIBUSB_CLASS_CONTENT_SECURITY"); break;
+						case LIBUSB_CLASS_VIDEO: curSetting->Nodes->Add("Device class: LIBUSB_CLASS_VIDEO"); break;
+						case LIBUSB_CLASS_PERSONAL_HEALTHCARE: curSetting->Nodes->Add("Device class: LIBUSB_CLASS_PERSONAL_HEALTHCARE"); break;
+						case LIBUSB_CLASS_DIAGNOSTIC_DEVICE: curSetting->Nodes->Add("Device class: LIBUSB_CLASS_DIAGNOSTIC_DEVICE"); break;
+						case LIBUSB_CLASS_WIRELESS: curSetting->Nodes->Add("Device class: LIBUSB_CLASS_WIRELESS"); break;
+						case LIBUSB_CLASS_APPLICATION: curSetting->Nodes->Add("Device class: LIBUSB_CLASS_APPLICATION"); break;
+						case LIBUSB_CLASS_VENDOR_SPEC: curSetting->Nodes->Add("Device class: LIBUSB_CLASS_VENDOR_SPEC"); break;
+						default: curSetting->Nodes->Add("Device class: unknown device class");
 						}
-						treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Interface SubClass: " + config->interface[k].altsetting[j].bInterfaceSubClass);
-						treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Interface protocol: " + config->interface[k].altsetting[j].bInterfaceProtocol);
-						if (config->interface[k].altsetting[j].extra_length > 0) treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Detected extra descriptors length: " + config->interface[k].altsetting[j].extra_length);
+						curSetting->Nodes->Add("Interface SubClass: " + config->interface[k].altsetting[j].bInterfaceSubClass);
+						curSetting->Nodes->Add("Interface protocol: " + config->interface[k].altsetting[j].bInterfaceProtocol);
+						if (config->interface[k].altsetting[j].extra_length > 0) curSetting->Nodes->Add("Detected extra descriptors length: " + config->interface[k].altsetting[j].extra_length);
 						ret = (libusb_error)libusb_open(devs[i], &handle);
 						if (ret != LIBUSB_SUCCESS) {
 							String^ errorName = gcnew String(libusb_error_name(ret));
 							String^ errorText = gcnew String(libusb_strerror(ret));
-							textBox33->AppendText("\r\nlibusb open device failed: " + errorName + " " + errorText);
-							treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Interface string descriptor: Open device error");
+							//textBox33->AppendText("\r\nlibusb open device failed: " + errorName + " " + errorText);
+							curSetting->Nodes->Add("Interface string descriptor: Open device error");
 						}
 						else {
 							//Interface string
@@ -933,85 +933,85 @@ System::Void UIProject::MyForm::button3_Click(System::Object ^ sender, System::E
 								ret = (libusb_error)libusb_get_string_descriptor_ascii(handle, config->interface[k].altsetting[j].iInterface, &data[0], 256);
 								if (ret > 0) {
 									String^ configurationText = gcnew String((char*)data);
-									treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Interface: " + configurationText);
+									curSetting->Nodes->Add("Interface: " + configurationText);
 								}
 								else {
 									String^ errorName = gcnew String(libusb_error_name(ret));
 									String^ errorText = gcnew String(libusb_strerror(ret));
-									textBox33->AppendText("\r\nlibusb read interface text failed: " + errorName + " " + errorText);
-									treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Interface: Read text error");
+									//textBox33->AppendText("\r\nlibusb read interface text failed: " + errorName + " " + errorText);
+									curSetting->Nodes->Add("Interface: Read text error");
 								}
 							}
 							else
-								treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Interface: no information");
+								curSetting->Nodes->Add("Interface: no information");
 							libusb_close(handle);
 						}
-						treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Num endpoints: " + config->interface[k].altsetting[j].bNumEndpoints);
+						curSetting->Nodes->Add("Num endpoints: " + config->interface[k].altsetting[j].bNumEndpoints);
 						//Iterate endpoints
 						for (int m = 0; m < config->interface[k].altsetting[j].bNumEndpoints; ++m) {
-							treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes->Add("Endpoint " + m);
-							treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Descriptor length: " + config->interface[k].altsetting[j].endpoint[m].bLength);
+							System::Windows::Forms::TreeNode^ curEndpoint = curSetting->Nodes->Add("Endpoint " + m);
+							curEndpoint->Nodes->Add("Descriptor length: " + config->interface[k].altsetting[j].endpoint[m].bLength);
 							switch (config->interface[k].altsetting[j].endpoint[m].bDescriptorType) {
-							case LIBUSB_DT_DEVICE: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Descriptor type: LIBUSB_DT_DEVICE"); break;
-							case LIBUSB_DT_CONFIG: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Descriptor type: LIBUSB_DT_CONFIG"); break;
-							case LIBUSB_DT_STRING: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Descriptor type: LIBUSB_DT_STRING"); break;
-							case LIBUSB_DT_INTERFACE: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Descriptor type: LIBUSB_DT_INTERFACE"); break;
-							case LIBUSB_DT_ENDPOINT: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Descriptor type: LIBUSB_DT_ENDPOINT"); break;
-							case LIBUSB_DT_BOS: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Descriptor type: LIBUSB_DT_BOS"); break;
-							case LIBUSB_DT_DEVICE_CAPABILITY: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Descriptor type: LIBUSB_DT_DEVICE_CAPABILITY"); break;
-							case LIBUSB_DT_HID: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Descriptor type: LIBUSB_DT_HID"); break;
-							case LIBUSB_DT_REPORT: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Descriptor type: LIBUSB_DT_REPORT"); break;
-							case LIBUSB_DT_PHYSICAL: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Descriptor type: LIBUSB_DT_PHYSICAL"); break;
-							case LIBUSB_DT_HUB: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Descriptor type: LIBUSB_DT_HUB"); break;
-							case LIBUSB_DT_SUPERSPEED_HUB: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Descriptor type: LIBUSB_DT_SUPERSPEED_HUB"); break;
-							case LIBUSB_DT_SS_ENDPOINT_COMPANION: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Descriptor type: LIBUSB_DT_SS_ENDPOINT_COMPANION"); break;
-							default: treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Descriptor type: unknown Descriptor type"); break;
+							case LIBUSB_DT_DEVICE: curEndpoint->Nodes->Add("Descriptor type: LIBUSB_DT_DEVICE"); break;
+							case LIBUSB_DT_CONFIG: curEndpoint->Nodes->Add("Descriptor type: LIBUSB_DT_CONFIG"); break;
+							case LIBUSB_DT_STRING: curEndpoint->Nodes->Add("Descriptor type: LIBUSB_DT_STRING"); break;
+							case LIBUSB_DT_INTERFACE: curEndpoint->Nodes->Add("Descriptor type: LIBUSB_DT_INTERFACE"); break;
+							case LIBUSB_DT_ENDPOINT: curEndpoint->Nodes->Add("Descriptor type: LIBUSB_DT_ENDPOINT"); break;
+							case LIBUSB_DT_BOS: curEndpoint->Nodes->Add("Descriptor type: LIBUSB_DT_BOS"); break;
+							case LIBUSB_DT_DEVICE_CAPABILITY: curEndpoint->Nodes->Add("Descriptor type: LIBUSB_DT_DEVICE_CAPABILITY"); break;
+							case LIBUSB_DT_HID: curEndpoint->Nodes->Add("Descriptor type: LIBUSB_DT_HID"); break;
+							case LIBUSB_DT_REPORT: curEndpoint->Nodes->Add("Descriptor type: LIBUSB_DT_REPORT"); break;
+							case LIBUSB_DT_PHYSICAL: curEndpoint->Nodes->Add("Descriptor type: LIBUSB_DT_PHYSICAL"); break;
+							case LIBUSB_DT_HUB: curEndpoint->Nodes->Add("Descriptor type: LIBUSB_DT_HUB"); break;
+							case LIBUSB_DT_SUPERSPEED_HUB: curEndpoint->Nodes->Add("Descriptor type: LIBUSB_DT_SUPERSPEED_HUB"); break;
+							case LIBUSB_DT_SS_ENDPOINT_COMPANION: curEndpoint->Nodes->Add("Descriptor type: LIBUSB_DT_SS_ENDPOINT_COMPANION"); break;
+							default: curEndpoint->Nodes->Add("Descriptor type: unknown Descriptor type"); break;
 							}
-							treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("EndpointAddress: " + config->interface[k].altsetting[j].endpoint[m].bEndpointAddress);
-							treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("EndpointNumber: " + (config->interface[k].altsetting[j].endpoint[m].bEndpointAddress & 0xf));
+							curEndpoint->Nodes->Add("EndpointAddress: 0x" + config->interface[k].altsetting[j].endpoint[m].bEndpointAddress.ToString("X2"));
+							curEndpoint->Nodes->Add("EndpointNumber: " + (config->interface[k].altsetting[j].endpoint[m].bEndpointAddress & 0xf));
 							if (config->interface[k].altsetting[j].endpoint[m].bEndpointAddress >> 7 & 0x1)
-								treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("EndpointDirection: LIBUSB_ENDPOINT_IN (device - to - host)");
+								curEndpoint->Nodes->Add("EndpointDirection: LIBUSB_ENDPOINT_IN (device - to - host)");
 							else
-								treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("EndpointDirection: LIBUSB_ENDPOINT_OUT (host - to - device)");
-							treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Attributes: " + config->interface[k].altsetting[j].endpoint[m].bmAttributes);
+								curEndpoint->Nodes->Add("EndpointDirection: LIBUSB_ENDPOINT_OUT (host - to - device)");
+							curEndpoint->Nodes->Add("Attributes: " + config->interface[k].altsetting[j].endpoint[m].bmAttributes);
 							switch (config->interface[k].altsetting[j].endpoint[m].bmAttributes & 0x3) {
 							case 0:
-								treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Transfer type: LIBUSB_TRANSFER_TYPE_CONTROL (Control endpoint)"); break;
+								curEndpoint->Nodes->Add("Transfer type: LIBUSB_TRANSFER_TYPE_CONTROL (Control endpoint)"); break;
 							case 1:
-								treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Transfer type: LIBUSB_TRANSFER_TYPE_ISOCHRONOUS (Isochronous endpoint)"); break;
+								curEndpoint->Nodes->Add("Transfer type: LIBUSB_TRANSFER_TYPE_ISOCHRONOUS (Isochronous endpoint)"); break;
 							case 2:
-								treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Transfer type: LIBUSB_TRANSFER_TYPE_BULK (Bulk endpoint)"); break;
+								curEndpoint->Nodes->Add("Transfer type: LIBUSB_TRANSFER_TYPE_BULK (Bulk endpoint)"); break;
 							case 3:
-								treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Transfer type: LIBUSB_TRANSFER_TYPE_INTERRUPT (Interrupt endpoint)"); break;
+								curEndpoint->Nodes->Add("Transfer type: LIBUSB_TRANSFER_TYPE_INTERRUPT (Interrupt endpoint)"); break;
 							case 4:
-								treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Transfer type: LIBUSB_TRANSFER_TYPE_BULK_STREAM (Stream endpoint)"); break;
+								curEndpoint->Nodes->Add("Transfer type: LIBUSB_TRANSFER_TYPE_BULK_STREAM (Stream endpoint)"); break;
 							}
 							switch (config->interface[k].altsetting[j].endpoint[m].bmAttributes >> 2 & 0x3) {
 							case 0:
-								treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Sync type: LIBUSB_ISO_SYNC_TYPE_NONE (No synchronization)"); break;
+								curEndpoint->Nodes->Add("Sync type: LIBUSB_ISO_SYNC_TYPE_NONE (No synchronization)"); break;
 							case 1:
-								treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Sync type: LIBUSB_ISO_SYNC_TYPE_ASYNC (Asynchronous)"); break;
+								curEndpoint->Nodes->Add("Sync type: LIBUSB_ISO_SYNC_TYPE_ASYNC (Asynchronous)"); break;
 							case 2:
-								treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Sync type: LIBUSB_ISO_SYNC_TYPE_ADAPTIVE (Adaptive)"); break;
+								curEndpoint->Nodes->Add("Sync type: LIBUSB_ISO_SYNC_TYPE_ADAPTIVE (Adaptive)"); break;
 							case 3:
-								treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Sync type: LIBUSB_ISO_SYNC_TYPE_SYNC (Synchronous)"); break;
+								curEndpoint->Nodes->Add("Sync type: LIBUSB_ISO_SYNC_TYPE_SYNC (Synchronous)"); break;
 							}
 							switch (config->interface[k].altsetting[j].endpoint[m].bmAttributes >> 4 & 0x3) {
 							case 0:
-								treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Usage type: LIBUSB_ISO_USAGE_TYPE_DATA (Data endpoint)"); break;
+								curEndpoint->Nodes->Add("Usage type: LIBUSB_ISO_USAGE_TYPE_DATA (Data endpoint)"); break;
 							case 1:
-								treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Usage type: LIBUSB_ISO_USAGE_TYPE_FEEDBACK (Feedback endpoint)"); break;
+								curEndpoint->Nodes->Add("Usage type: LIBUSB_ISO_USAGE_TYPE_FEEDBACK (Feedback endpoint)"); break;
 							case 2:
-								treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Usage type: LIBUSB_ISO_USAGE_TYPE_IMPLICIT (Implicit feedback Data endpoint)"); break;
+								curEndpoint->Nodes->Add("Usage type: LIBUSB_ISO_USAGE_TYPE_IMPLICIT (Implicit feedback Data endpoint)"); break;
 							default:
-								treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("unknown usage type"); break;
+								curEndpoint->Nodes->Add("unknown usage type"); break;
 							}
-							treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Max packet size: " + config->interface[k].altsetting[j].endpoint[m].wMaxPacketSize);
-							treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Data transfer polling interval: " + config->interface[k].altsetting[j].endpoint[m].bInterval);
-							treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Sync feedback rate (only audio devices): " + config->interface[k].altsetting[j].endpoint[m].bRefresh);
-							treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Sync endpoint addr (only audio devices): " + config->interface[k].altsetting[j].endpoint[m].bSynchAddress);
+							curEndpoint->Nodes->Add("Max packet size: " + config->interface[k].altsetting[j].endpoint[m].wMaxPacketSize);
+							curEndpoint->Nodes->Add("Data transfer polling interval: " + config->interface[k].altsetting[j].endpoint[m].bInterval);
+							curEndpoint->Nodes->Add("Sync feedback rate (only audio devices): " + config->interface[k].altsetting[j].endpoint[m].bRefresh);
+							curEndpoint->Nodes->Add("Sync endpoint addr (only audio devices): 0x" + config->interface[k].altsetting[j].endpoint[m].bSynchAddress.ToString("X2"));
 							if (config->interface[k].altsetting[j].endpoint[m].extra_length > 0)
-								treeView1->Nodes[i]->Nodes[l]->Nodes[k]->Nodes[j]->Nodes[m]->Nodes->Add("Detected extra descriptors length: " + config->interface[k].altsetting[j].endpoint[m].extra_length);
+								curEndpoint->Nodes->Add("Detected extra descriptors length: " + config->interface[k].altsetting[j].endpoint[m].extra_length);
 						}
 
 					}
