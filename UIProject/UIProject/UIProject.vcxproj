@@ -144,7 +144,6 @@
     <ClCompile Include="..\..\NFC_Base_Light_Control\NFC_Base_Light_Control\DimensionsPortal.cpp" />
     <ClCompile Include="..\..\NFC_Base_Light_Control\NFC_Base_Light_Control\InfinityPortal.cpp" />
     <ClCompile Include="..\..\NFC_Base_Light_Control\NFC_Base_Light_Control\PortalConnection.cpp" />
-    <ClCompile Include="..\..\NFC_Base_Light_Control\NFC_Base_Light_Control\Tutorial.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="UIForm.cpp" />
   </ItemGroup>

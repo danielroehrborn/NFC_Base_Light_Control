@@ -35,9 +35,6 @@
     <ClCompile Include="..\..\NFC_Base_Light_Control\NFC_Base_Light_Control\PortalConnection.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\NFC_Base_Light_Control\NFC_Base_Light_Control\Tutorial.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UIForm.h">
